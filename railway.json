@@ -5,12 +5,8 @@
       "use": "@railway/app-node",
       "config": {
         "installCommand": "npm install",
-        "buildCommand": "npm run build",
         "startCommand": "npm start"
       }
     }
-  ],
-  "volumes": {
-    "data": "./data"
-  }
+  ]
 }
