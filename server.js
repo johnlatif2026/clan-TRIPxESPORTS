@@ -373,22 +373,18 @@ app.post('/admin/login', async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    db.get(
-      `SELECT * FROM admin WHERE username = ?`,
-      [username],
-      (err, admin) => {
-        if (err || !admin) {
-          return res.json({ success: false, message: 'اسم المستخدم أو كلمة المرور غير صحيحة' });
-        }
+    const snap = await db.collection('admin').doc(username).get();
+    if (!snap.exists) {
+      return res.json({ success: false, message: 'اسم المستخدم أو كلمة المرور غير صحيحة' });
+    }
 
-        if (bcrypt.compareSync(password, admin.password)) {
-          req.session.adminLoggedIn = true;
-          res.json({ success: true });
-        } else {
-          res.json({ success: false, message: 'اسم المستخدم أو كلمة المرور غير صحيحة' });
-        }
-      }
-    );
+    const adminUser = snap.data();
+    if (bcrypt.compareSync(password, adminUser.password)) {
+      req.session.adminLoggedIn = true;
+      return res.json({ success: true });
+    }
+
+    res.json({ success: false, message: 'اسم المستخدم أو كلمة المرور غير صحيحة' });
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({ success: false, message: 'حدث خطأ أثناء تسجيل الدخول' });
@@ -400,10 +396,8 @@ app.get('/admin/check-session', (req, res) => {
 });
 
 app.get('/admin/logout', (req, res) => {
-  req.session.destroy(err => {
-    if (err) {
-      return res.status(500).json({ success: false });
-    }
+  req.session.destroy((err) => {
+    if (err) return res.status(500).json({ success: false });
     res.json({ success: true });
   });
 });
