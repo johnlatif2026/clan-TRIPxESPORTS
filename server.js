@@ -163,7 +163,7 @@ const sendEmailNotification = async (subject, htmlContent) => {
     }
 
     const mailOptions = {
-      from: `"Clan King ESPORTS" <${process.env.SMTP_USER}>`,
+      from: `"Clan TRIPxESPORTS" <${process.env.SMTP_USER}>`,
       to: process.env.NOTIFICATION_EMAIL,
       subject,
       html: htmlContent,
@@ -237,7 +237,7 @@ app.post('/api/booking', upload.single('bGameVideo'), async (req, res) => {
 <b>الاسم:</b> ${bName}
 <b>البريد:</b> ${bEmail}
 <b>الهاتف:</b> ${bPhone}
-<b>مركزك في الاسكريم:</b> ${b>الهاتف:</b> ${bPhone}}
+<b>مركزك في الاسكريم:</b> ${your_position_in_scrim}
 <b>الفريمات:</b> ${bDuration}
 <b>السن:</b> ${bAge}
 <b>رابط لوحة التحكم:</b> ${process.env.ADMIN_PANEL_URL || ''}
