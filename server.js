@@ -213,7 +213,7 @@ const ensureAdminUser = async () => {
 // Booking
 app.post('/api/booking', upload.single('bGameVideo'), async (req, res) => {
   try {
-    const { bName, bEmail, bPhone, bDuration, bAge } = req.body;
+    const { bName, bEmail, bPhone, bScrim, bDuration, bAge } = req.body;
     const gameVideo = req.file ? '/uploads/' + req.file.filename : null;
 
     const id = uuidv4();
@@ -223,7 +223,7 @@ app.post('/api/booking', upload.single('bGameVideo'), async (req, res) => {
       name: bName,
       email: bEmail,
       phone: bPhone,
-      your_position_in_scrim: your_position_in_scrim,
+      scrim: bScrim,
       duration: bDuration,
       age: bAge,
       gameVideo,
@@ -237,7 +237,7 @@ app.post('/api/booking', upload.single('bGameVideo'), async (req, res) => {
 <b>الاسم:</b> ${bName}
 <b>البريد:</b> ${bEmail}
 <b>الهاتف:</b> ${bPhone}
-<b>مركزك في الاسكريم:</b> ${your_position_in_scrim}
+<b>مركزك في الاسكريم:</b> ${bScrim}
 <b>الفريمات:</b> ${bDuration}
 <b>السن:</b> ${bAge}
 <b>رابط لوحة التحكم:</b> ${process.env.ADMIN_PANEL_URL || ''}
