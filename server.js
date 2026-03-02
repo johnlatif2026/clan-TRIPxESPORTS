@@ -223,6 +223,7 @@ app.post('/api/booking', upload.single('bGameVideo'), async (req, res) => {
       name: bName,
       email: bEmail,
       phone: bPhone,
+      your_position_in_scrim: your_position_in_scrim,
       duration: bDuration,
       age: bAge,
       gameVideo,
@@ -236,6 +237,7 @@ app.post('/api/booking', upload.single('bGameVideo'), async (req, res) => {
 <b>الاسم:</b> ${bName}
 <b>البريد:</b> ${bEmail}
 <b>الهاتف:</b> ${bPhone}
+<b>مركزك في الاسكريم:</b> ${b>الهاتف:</b> ${bPhone}}
 <b>الفريمات:</b> ${bDuration}
 <b>السن:</b> ${bAge}
 <b>رابط لوحة التحكم:</b> ${process.env.ADMIN_PANEL_URL || ''}
@@ -249,6 +251,7 @@ app.post('/api/booking', upload.single('bGameVideo'), async (req, res) => {
   <p><strong>الاسم:</strong> ${bName}</p>
   <p><strong>البريد الإلكتروني:</strong> ${bEmail}</p>
   <p><strong>رقم الهاتف:</strong> ${bPhone}</p>
+  <p><strong>مركزك في الاسكريم:</strong> ${your_position_in_scrim}</p>
   <p><strong>الفريمات:</strong> ${bDuration}</p>
   <p><strong>العمر:</strong> ${bAge}</p>
   <p style="margin-top: 20px;">
