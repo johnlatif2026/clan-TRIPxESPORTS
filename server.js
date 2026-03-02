@@ -251,7 +251,7 @@ app.post('/api/booking', upload.single('bGameVideo'), async (req, res) => {
   <p><strong>الاسم:</strong> ${bName}</p>
   <p><strong>البريد الإلكتروني:</strong> ${bEmail}</p>
   <p><strong>رقم الهاتف:</strong> ${bPhone}</p>
-  <p><strong>مركزك في الاسكريم:</strong> ${your_position_in_scrim}</p>
+  <p><strong>مركزك في الاسكريم:</strong> ${bScrim}</p>
   <p><strong>الفريمات:</strong> ${bDuration}</p>
   <p><strong>العمر:</strong> ${bAge}</p>
   <p style="margin-top: 20px;">
