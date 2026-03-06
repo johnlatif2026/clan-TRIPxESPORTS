@@ -1,1180 +1,1272 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>لوحة التحكم - Clan TRIPxESPORTS</title>
+
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+  <!-- خط عربي لطيف -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+
   <style>
-    .sidebar {
-      transition: all 0.3s ease;
-    }
-    .sidebar.collapsed {
-      width: 80px;
-    }
-    .sidebar.collapsed .sidebar-text {
-      display: none;
-    }
-    .main-content {
-      transition: margin-right 0.3s ease;
-    }
-    @media (max-width: 768px) {
-      .sidebar {
-        position: fixed;
-        z-index: 40;
-        height: 100vh;
-      }
-      .sidebar.collapsed {
-        width: 0;
-        overflow: hidden;
-      }
-      .main-content {
-        margin-right: 0 !important;
-      }
-    }
+    html { font-family: "Cairo", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    /* Scrollbar بسيط (اختياري) */
+    .nice-scroll::-webkit-scrollbar { width: 10px; height: 10px; }
+    .nice-scroll::-webkit-scrollbar-thumb { background: rgba(100,116,139,.35); border-radius: 9999px; }
+    .nice-scroll::-webkit-scrollbar-track { background: transparent; }
   </style>
 </head>
-<body class="bg-gray-100 dark:bg-gray-900">
-  <div class="flex h-screen">
-    <!-- الشريط الجانبي -->
-    <div id="sidebar" class="sidebar bg-gray-800 text-white w-64 flex-shrink-0">
-      <div class="p-4 flex items-center justify-between border-b border-gray-700">
-        <a href="dashboard.html" class="flex items-center">
-          <i class="fas fa-crown text-yellow-400 text-xl"></i>
-          <span class="sidebar-text text-xl font-bold mr-2">Clan TRIPxESPORTS</span>
-        </a>
-        <button id="toggleSidebar" class="text-gray-400 hover:text-white">
-          <i class="fas fa-bars"></i>
-        </button>
-      </div>
-      
-      <nav class="p-4">
-        <ul class="space-y-2">
-          <li>
-            <a href="#" class="flex items-center p-2 rounded hover:bg-gray-700 active-tab" data-tab="dashboard">
-              <i class="fas fa-tachometer-alt"></i>
-              <span class="sidebar-text mr-3">لوحة التحكم</span>
-            </a>
-          </li>
-          <li>
-            <a href="#" class="flex items-center p-2 rounded hover:bg-gray-700" data-tab="bookings">
-              <i class="fas fa-users"></i>
-              <span class="sidebar-text mr-3">طلبات الانضمام</span>
-            </a>
-          </li>
-          <li>
-            <a href="#" class="flex items-center p-2 rounded hover:bg-gray-700" data-tab="messages">
-              <i class="fas fa-envelope"></i>
-              <span class="sidebar-text mr-3">إرسال رسائل</span>
-            </a>
-          </li>
-          <li>
-            <a href="#" class="flex items-center p-2 rounded hover:bg-gray-700" data-tab="inquiries">
-              <i class="fas fa-question-circle"></i>
-              <span class="sidebar-text mr-3">الاستفسارات</span>
-            </a>
-          </li>
-          <li>
-            <a href="#" class="flex items-center p-2 rounded hover:bg-gray-700" data-tab="results">
-              <i class="fas fa-check-circle"></i>
-              <span class="sidebar-text mr-3">النتائج المعتمدة</span>
-            </a>
-          </li>
-          <li class="border-t border-gray-700 pt-2 mt-2">
-            <a href="/admin/logout" class="flex items-center p-2 rounded hover:bg-gray-700 text-red-400" id="logoutBtn">
-              <i class="fas fa-sign-out-alt"></i>
-              <span class="sidebar-text mr-3">تسجيل الخروج</span>
-            </a>
-          </li>
-        </ul>
-      </nav>
-    </div>
-    
-    <!-- المحتوى الرئيسي -->
-    <div class="main-content flex-1 overflow-auto">
-      <!-- شريط العنوان -->
-      <header class="bg-white dark:bg-gray-800 shadow-sm p-4 flex justify-between items-center">
-        <div class="flex items-center">
-          <button id="mobileToggleSidebar" class="mr-4 p-2 rounded-full bg-gray-200 dark:bg-gray-700 md:hidden">
-            <i class="fas fa-bars"></i>
-          </button>
-          <h1 class="text-xl font-bold text-gray-800 dark:text-white" id="pageTitle">لوحة التحكم</h1>
-        </div>
-        <div class="flex items-center space-x-4">
-          <button id="toggleDarkMode" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700">
-            <i class="fas fa-moon dark:hidden"></i>
-            <i class="fas fa-sun hidden dark:inline"></i>
-          </button>
-          <div class="flex items-center">
-            <img src="https://ui-avatars.com/api/?name=Admin&background=random" alt="Admin" class="w-8 h-8 rounded-full">
-            <span class="mr-2 text-gray-800 dark:text-white">المدير</span>
-          </div>
-        </div>
-      </header>
-      
-      <!-- المحتوى -->
-      <main class="p-4">
-        <!-- قسم لوحة التحكم -->
-        <div id="dashboardTab" class="tab-content">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-            <div class="bg-white dark:bg-gray-700 rounded-lg shadow p-6">
-              <div class="flex items-center justify-between">
-                <div>
-                  <p class="text-gray-500 dark:text-gray-400">طلبات الانضمام</p>
-                  <h3 class="text-2xl font-bold text-gray-800 dark:text-white" id="totalBookings">0</h3>
-                </div>
-                <div class="p-3 rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300">
-                  <i class="fas fa-users text-xl"></i>
-                </div>
-              </div>
-              <div class="mt-4">
-                <a href="#" class="text-indigo-600 dark:text-indigo-400 hover:underline" data-tab="bookings">عرض الكل</a>
-              </div>
-            </div>
-            
-            <div class="bg-white dark:bg-gray-700 rounded-lg shadow p-6">
-              <div class="flex items-center justify-between">
-                <div>
-                  <p class="text-gray-500 dark:text-gray-400">الاستفسارات الجديدة</p>
-                  <h3 class="text-2xl font-bold text-gray-800 dark:text-white" id="newInquiries">0</h3>
-                </div>
-                <div class="p-3 rounded-full bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-300">
-                  <i class="fas fa-envelope text-xl"></i>
-                </div>
-              </div>
-              <div class="mt-4">
-                <a href="#" class="text-green-600 dark:text-green-400 hover:underline" data-tab="inquiries">عرض الكل</a>
-              </div>
-            </div>
-            
-            <div class="bg-white dark:bg-gray-700 rounded-lg shadow p-6">
-              <div class="flex items-center justify-between">
-                <div>
-                  <p class="text-gray-500 dark:text-gray-400">الطلبات المعتمدة</p>
-                  <h3 class="text-2xl font-bold text-gray-800 dark:text-white" id="approvedResults">0</h3>
-                </div>
-                <div class="p-3 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300">
-                  <i class="fas fa-check-circle text-xl"></i>
-                </div>
-              </div>
-              <div class="mt-4">
-                <a href="#" class="text-blue-600 dark:text-blue-400 hover:underline" data-tab="results">عرض الكل</a>
-              </div>
-            </div>
-          </div>
-          
-          <div class="bg-white dark:bg-gray-700 rounded-lg shadow p-6">
-            <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4">آخر الطلبات</h2>
-            <div class="overflow-x-auto">
-              <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
-                <thead class="bg-gray-50 dark:bg-gray-600">
-                  <tr>
-                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">الاسم</th>
-                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">رقم الهاتف</th>
-                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">الفريمات</th>
-                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">الحالة</th>
-                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">التاريخ</th>
-                  </tr>
-                </thead>
-                <tbody id="recentBookings" class="bg-white dark:bg-gray-700 divide-y divide-gray-200 dark:divide-gray-600">
-                  <!-- سيتم ملؤه بالبيانات -->
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-        
-        <!-- قسم طلبات الانضمام -->
-        <div id="bookingsTab" class="tab-content hidden">
-          <div class="bg-white dark:bg-gray-700 rounded-lg shadow overflow-hidden">
-            <div class="p-4 border-b border-gray-200 dark:border-gray-600 flex justify-between items-center">
-              <h2 class="text-xl font-bold text-gray-800 dark:text-white">طلبات الانضمام</h2>
-              <div class="flex space-x-2">
-                <select id="bookingFilter" class="border border-gray-300 dark:border-gray-600 rounded px-3 py-1 bg-white dark:bg-gray-800">
-                  <option value="all">الكل</option>
-                  <option value="pending">قيد الانتظار</option>
-                  <option value="approved">مقبولة</option>
-                  <option value="rejected">مرفوضة</option>
-                </select>
-              </div>
-            </div>
-            <div class="overflow-x-auto">
-              <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
-                <thead class="bg-gray-50 dark:bg-gray-600">
-                  <tr>
-                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">الاسم</th>
-                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">البريد</th>
-                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">الهاتف</th>
-                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">مركزك في الاسكريم</th>
-                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">الفريمات</th>
-                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">السن</th>
-                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">الحالة</th>
-                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">الإجراءات</th>
-                  </tr>
-                </thead>
-                <tbody id="bookingsTable" class="bg-white dark:bg-gray-700 divide-y divide-gray-200 dark:divide-gray-600">
-                  <!-- سيتم ملؤه بالبيانات -->
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-        
-        <!-- قسم إرسال الرسائل -->
-        <div id="messagesTab" class="tab-content hidden">
-          <div class="bg-white dark:bg-gray-700 rounded-lg shadow overflow-hidden">
-            <div class="p-4 border-b border-gray-200 dark:border-gray-600">
-              <h2 class="text-xl font-bold text-gray-800 dark:text-white">إرسال رسالة إلى اللاعب</h2>
-            </div>
-            <div class="p-4">
-              <form id="sendMessageForm">
-                <div class="mb-4">
-                  <label class="block text-gray-700 dark:text-gray-300 mb-2">البريد الإلكتروني للاعب</label>
-                  <input type="email" id="playerEmail" class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700" required>
-                </div>
-                <div class="mb-4">
-                  <label class="block text-gray-700 dark:text-gray-300 mb-2">اسم المرسل (اختياري)</label>
-                  <input type="text" id="senderName" class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700" placeholder="STORE King个ESPORTSツ">
-                </div>
-                <div class="mb-4">
-                  <label class="block text-gray-700 dark:text-gray-300 mb-2">الرسالة</label>
-                  <textarea id="messageContent" rows="5" class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700" required></textarea>
-                </div>
-                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
-                  إرسال الرسالة
-                </button>
-              </form>
-              <div id="messageResponse" class="mt-4 hidden"></div>
-            </div>
-          </div>
 
-          <div class="bg-white dark:bg-gray-700 rounded-lg shadow overflow-hidden mt-6">
-            <div class="p-4 border-b border-gray-200 dark:border-gray-600">
-              <h2 class="text-xl font-bold text-gray-800 dark:text-white">رفع نتيجة اللاعب</h2>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100">
+  <!-- Toasts -->
+  <div id="toastHost" class="fixed top-4 right-4 z-[60] space-y-2"></div>
+
+  <!-- Mobile backdrop -->
+  <div id="backdrop" class="fixed inset-0 bg-black/40 hidden z-40"></div>
+
+  <div class="min-h-screen">
+    <div class="lg:flex">
+      <!-- Sidebar -->
+      <aside
+        id="sidebar"
+        class="fixed lg:sticky top-0 right-0 z-50 lg:z-10 h-screen w-[290px] lg:w-[300px]
+               -translate-x-0 translate-y-0
+               bg-white/85 dark:bg-slate-900/70
+               backdrop-blur-xl
+               border-l border-slate-200/70 dark:border-slate-800/70
+               shadow-lg lg:shadow-none
+               transform lg:transform-none
+               transition-transform duration-300 ease-out
+               -translate-x-0
+               translate-x-full lg:translate-x-0"
+      >
+        <!-- Brand -->
+        <div class="h-16 px-4 flex items-center justify-between border-b border-slate-200/70 dark:border-slate-800/70">
+          <a href="dashboard.html" class="flex items-center gap-3">
+            <div class="h-10 w-10 rounded-2xl grid place-items-center bg-gradient-to-tr from-indigo-600 to-sky-500 text-white shadow">
+              <i class="fas fa-crown"></i>
             </div>
-            <div class="p-4">
-              <form id="uploadResultForm" enctype="multipart/form-data">
-                <div class="mb-4">
-                  <label class="block text-gray-700 dark:text-gray-300 mb-2">رقم هاتف اللاعب</label>
-                  <input type="tel" id="playerPhone" class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700" required>
-                </div>
-                <div class="mb-4">
-                  <label class="block text-gray-700 dark:text-gray-300 mb-2">اسم اللاعب (اختياري)</label>
-                  <input type="text" id="playerName" class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700">
-                </div>
-                <div class="mb-4">
-                  <label class="block text-gray-700 dark:text-gray-300 mb-2">ملف النتيجة</label>
-                  <input type="file" id="resultFile" name="resultFile" class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700" accept=".pdf,.jpg,.jpeg,.png" required>
-                </div>
-                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded">
-                  رفع النتيجة
-                </button>
-              </form>
-              <div id="uploadResponse" class="mt-4 hidden"></div>
+            <div class="leading-tight">
+              <div class="font-bold">Clan TRIPxESPORTS</div>
+              <div class="text-xs text-slate-500 dark:text-slate-400">Admin Panel</div>
+            </div>
+          </a>
+          <button id="closeSidebarMobile" class="lg:hidden h-10 w-10 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">
+            <i class="fas fa-xmark"></i>
+          </button>
+        </div>
+
+        <!-- User mini card -->
+        <div class="p-4">
+          <div class="rounded-2xl p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/70">
+            <div class="flex items-center gap-3">
+              <img
+                src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff"
+                alt="Admin"
+                class="w-10 h-10 rounded-2xl"
+              />
+              <div class="flex-1">
+                <div class="font-semibold">المدير</div>
+                <div class="text-xs text-slate-500 dark:text-slate-400">صلاحيات كاملة</div>
+              </div>
+              <button id="toggleDarkMode" class="h-10 w-10 rounded-xl border border-slate-200/70 dark:border-slate-800/70 hover:bg-white dark:hover:bg-slate-800">
+                <i class="fas fa-moon dark:hidden"></i>
+                <i class="fas fa-sun hidden dark:inline"></i>
+              </button>
             </div>
           </div>
         </div>
-        
-        <!-- قسم الاستفسارات -->
-        <div id="inquiriesTab" class="tab-content hidden">
-          <div class="bg-white dark:bg-gray-700 rounded-lg shadow overflow-hidden">
-            <div class="p-4 border-b border-gray-200 dark:border-gray-600 flex justify-between items-center">
-              <h2 class="text-xl font-bold text-gray-800 dark:text-white">الاستفسارات</h2>
-              <div class="flex space-x-2">
-                <select id="inquiryFilter" class="border border-gray-300 dark:border-gray-600 rounded px-3 py-1 bg-white dark:bg-gray-800">
+
+        <!-- Nav -->
+        <nav class="px-3">
+          <ul class="space-y-1">
+            <li>
+              <a href="#" data-tab="dashboard"
+                 class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-2xl
+                        text-slate-700 dark:text-slate-200
+                        hover:bg-slate-100 dark:hover:bg-slate-800/70
+                        transition">
+                <span class="h-9 w-9 rounded-xl grid place-items-center bg-indigo-600/10 text-indigo-600 dark:text-indigo-300 dark:bg-indigo-400/10">
+                  <i class="fas fa-tachometer-alt"></i>
+                </span>
+                <span class="font-semibold">لوحة التحكم</span>
+              </a>
+            </li>
+
+            <li>
+              <a href="#" data-tab="bookings"
+                 class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-2xl
+                        text-slate-700 dark:text-slate-200
+                        hover:bg-slate-100 dark:hover:bg-slate-800/70
+                        transition">
+                <span class="h-9 w-9 rounded-xl grid place-items-center bg-sky-600/10 text-sky-600 dark:text-sky-300 dark:bg-sky-400/10">
+                  <i class="fas fa-users"></i>
+                </span>
+                <span class="font-semibold">طلبات الانضمام</span>
+              </a>
+            </li>
+
+            <li>
+              <a href="#" data-tab="messages"
+                 class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-2xl
+                        text-slate-700 dark:text-slate-200
+                        hover:bg-slate-100 dark:hover:bg-slate-800/70
+                        transition">
+                <span class="h-9 w-9 rounded-xl grid place-items-center bg-emerald-600/10 text-emerald-600 dark:text-emerald-300 dark:bg-emerald-400/10">
+                  <i class="fas fa-envelope"></i>
+                </span>
+                <span class="font-semibold">إرسال رسائل</span>
+              </a>
+            </li>
+
+            <li>
+              <a href="#" data-tab="inquiries"
+                 class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-2xl
+                        text-slate-700 dark:text-slate-200
+                        hover:bg-slate-100 dark:hover:bg-slate-800/70
+                        transition">
+                <span class="h-9 w-9 rounded-xl grid place-items-center bg-amber-600/10 text-amber-700 dark:text-amber-300 dark:bg-amber-400/10">
+                  <i class="fas fa-question-circle"></i>
+                </span>
+                <span class="font-semibold">الاستفسارات</span>
+              </a>
+            </li>
+
+            <li>
+              <a href="#" data-tab="results"
+                 class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-2xl
+                        text-slate-700 dark:text-slate-200
+                        hover:bg-slate-100 dark:hover:bg-slate-800/70
+                        transition">
+                <span class="h-9 w-9 rounded-xl grid place-items-center bg-violet-600/10 text-violet-700 dark:text-violet-300 dark:bg-violet-400/10">
+                  <i class="fas fa-check-circle"></i>
+                </span>
+                <span class="font-semibold">النتائج المعتمدة</span>
+              </a>
+            </li>
+
+            <li class="pt-2">
+              <a href="/admin/logout" id="logoutBtn"
+                 class="flex items-center gap-3 px-3 py-2.5 rounded-2xl
+                        text-rose-600 dark:text-rose-300
+                        hover:bg-rose-50 dark:hover:bg-rose-500/10
+                        transition">
+                <span class="h-9 w-9 rounded-xl grid place-items-center bg-rose-600/10 text-rose-600 dark:text-rose-300 dark:bg-rose-400/10">
+                  <i class="fas fa-sign-out-alt"></i>
+                </span>
+                <span class="font-semibold">تسجيل الخروج</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+        <!-- Footer -->
+        <div class="absolute bottom-0 right-0 left-0 p-4">
+          <div class="text-xs text-slate-500 dark:text-slate-400 text-center">
+            © <span id="yearNow"></span> TRIPxESPORTS
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main -->
+      <div class="lg:flex-1 lg:mr-[300px]">
+        <!-- Topbar -->
+        <header class="sticky top-0 z-30 bg-white/70 dark:bg-slate-950/60 backdrop-blur-xl border-b border-slate-200/70 dark:border-slate-800/70">
+          <div class="h-16 px-4 sm:px-6 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <button id="openSidebarMobile"
+                      class="lg:hidden h-10 w-10 rounded-xl border border-slate-200/70 dark:border-slate-800/70
+                             hover:bg-slate-100 dark:hover:bg-slate-800">
+                <i class="fas fa-bars"></i>
+              </button>
+
+              <div>
+                <h1 id="pageTitle" class="text-lg sm:text-xl font-bold">لوحة التحكم</h1>
+                <p class="text-xs text-slate-500 dark:text-slate-400 -mt-0.5">متوافق مع كل الشاشات • تصميم مريح</p>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <div class="hidden sm:flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+                <i class="fa-regular fa-circle-check"></i>
+                <span>Session Guard</span>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Content -->
+        <main class="p-4 sm:p-6">
+          <!-- Dashboard Tab -->
+          <section id="dashboardTab" class="tab-content space-y-6">
+            <!-- KPIs -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+              <div class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/70 p-5 shadow-sm">
+                <div class="flex items-start justify-between gap-4">
+                  <div>
+                    <div class="text-sm text-slate-500 dark:text-slate-400">طلبات الانضمام</div>
+                    <div class="text-3xl font-extrabold mt-1" id="totalBookings">0</div>
+                    <a href="#" data-tab="bookings" class="inline-flex items-center gap-2 mt-3 text-sm font-semibold text-indigo-600 dark:text-indigo-300 hover:underline">
+                      عرض الكل <i class="fas fa-arrow-left"></i>
+                    </a>
+                  </div>
+                  <div class="h-12 w-12 rounded-2xl grid place-items-center bg-indigo-600/10 text-indigo-600 dark:text-indigo-300 dark:bg-indigo-400/10">
+                    <i class="fas fa-users text-lg"></i>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/70 p-5 shadow-sm">
+                <div class="flex items-start justify-between gap-4">
+                  <div>
+                    <div class="text-sm text-slate-500 dark:text-slate-400">الاستفسارات الجديدة</div>
+                    <div class="text-3xl font-extrabold mt-1" id="newInquiries">0</div>
+                    <a href="#" data-tab="inquiries" class="inline-flex items-center gap-2 mt-3 text-sm font-semibold text-amber-700 dark:text-amber-300 hover:underline">
+                      عرض الكل <i class="fas fa-arrow-left"></i>
+                    </a>
+                  </div>
+                  <div class="h-12 w-12 rounded-2xl grid place-items-center bg-amber-600/10 text-amber-700 dark:text-amber-300 dark:bg-amber-400/10">
+                    <i class="fas fa-envelope text-lg"></i>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/70 p-5 shadow-sm">
+                <div class="flex items-start justify-between gap-4">
+                  <div>
+                    <div class="text-sm text-slate-500 dark:text-slate-400">الطلبات المعتمدة</div>
+                    <div class="text-3xl font-extrabold mt-1" id="approvedResults">0</div>
+                    <a href="#" data-tab="results" class="inline-flex items-center gap-2 mt-3 text-sm font-semibold text-violet-700 dark:text-violet-300 hover:underline">
+                      عرض الكل <i class="fas fa-arrow-left"></i>
+                    </a>
+                  </div>
+                  <div class="h-12 w-12 rounded-2xl grid place-items-center bg-violet-600/10 text-violet-700 dark:text-violet-300 dark:bg-violet-400/10">
+                    <i class="fas fa-check-circle text-lg"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recent bookings -->
+            <div class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/70 shadow-sm">
+              <div class="p-5 flex items-center justify-between">
+                <div>
+                  <h2 class="text-lg font-bold">آخر الطلبات</h2>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">عرض آخر 5 طلبات بشكل مرتب</p>
+                </div>
+                <div class="hidden sm:flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+                  <i class="fas fa-table"></i><span>Auto</span>
+                </div>
+              </div>
+              <div class="overflow-auto nice-scroll">
+                <table class="min-w-full text-sm">
+                  <thead class="bg-slate-50 dark:bg-slate-950/40 text-slate-500 dark:text-slate-400">
+                    <tr>
+                      <th class="px-5 py-3 text-right font-semibold">الاسم</th>
+                      <th class="px-5 py-3 text-right font-semibold">رقم الهاتف</th>
+                      <th class="px-5 py-3 text-right font-semibold">الفريمات</th>
+                      <th class="px-5 py-3 text-right font-semibold">الحالة</th>
+                      <th class="px-5 py-3 text-right font-semibold">التاريخ</th>
+                    </tr>
+                  </thead>
+                  <tbody id="recentBookings" class="divide-y divide-slate-200/70 dark:divide-slate-800/70">
+                    <!-- سيتم ملؤه بالبيانات -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <!-- Bookings Tab -->
+          <section id="bookingsTab" class="tab-content hidden space-y-4">
+            <div class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/70 shadow-sm">
+              <div class="p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div>
+                  <h2 class="text-lg font-bold">طلبات الانضمام</h2>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">فلتر سريع + جدول متجاوب</p>
+                </div>
+                <div class="flex items-center gap-2">
+                  <select id="bookingFilter"
+                          class="h-10 rounded-2xl px-4 border border-slate-200/70 dark:border-slate-800/70
+                                 bg-white dark:bg-slate-950/40 text-sm">
+                    <option value="all">الكل</option>
+                    <option value="pending">قيد الانتظار</option>
+                    <option value="approved">مقبولة</option>
+                    <option value="rejected">مرفوضة</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="overflow-auto nice-scroll">
+                <table class="min-w-full text-sm">
+                  <thead class="bg-slate-50 dark:bg-slate-950/40 text-slate-500 dark:text-slate-400">
+                    <tr>
+                      <th class="px-5 py-3 text-right font-semibold">الاسم</th>
+                      <th class="px-5 py-3 text-right font-semibold">البريد</th>
+                      <th class="px-5 py-3 text-right font-semibold">الهاتف</th>
+                      <th class="px-5 py-3 text-right font-semibold">مركزك في الاسكريم</th>
+                      <th class="px-5 py-3 text-right font-semibold">الفريمات</th>
+                      <th class="px-5 py-3 text-right font-semibold">السن</th>
+                      <th class="px-5 py-3 text-right font-semibold">الحالة</th>
+                      <th class="px-5 py-3 text-right font-semibold">الإجراءات</th>
+                    </tr>
+                  </thead>
+                  <tbody id="bookingsTable" class="divide-y divide-slate-200/70 dark:divide-slate-800/70">
+                    <!-- سيتم ملؤه بالبيانات -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <!-- Messages Tab -->
+          <section id="messagesTab" class="tab-content hidden space-y-6">
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+              <!-- Send message -->
+              <div class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/70 shadow-sm">
+                <div class="p-5 border-b border-slate-200/70 dark:border-slate-800/70">
+                  <h2 class="text-lg font-bold">إرسال رسالة إلى اللاعب</h2>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">نموذج بسيط وواضح</p>
+                </div>
+                <div class="p-5">
+                  <form id="sendMessageForm" class="space-y-4">
+                    <div>
+                      <label class="block text-sm font-semibold mb-1">البريد الإلكتروني للاعب</label>
+                      <input type="email" id="playerEmail" required
+                             class="w-full h-11 rounded-2xl px-4 border border-slate-200/70 dark:border-slate-800/70
+                                    bg-white dark:bg-slate-950/40 outline-none focus:ring-4 focus:ring-indigo-500/15">
+                    </div>
+
+                    <div>
+                      <label class="block text-sm font-semibold mb-1">اسم المرسل (اختياري)</label>
+                      <input type="text" id="senderName" placeholder="STORE King个ESPORTSツ"
+                             class="w-full h-11 rounded-2xl px-4 border border-slate-200/70 dark:border-slate-800/70
+                                    bg-white dark:bg-slate-950/40 outline-none focus:ring-4 focus:ring-indigo-500/15">
+                    </div>
+
+                    <div>
+                      <label class="block text-sm font-semibold mb-1">الرسالة</label>
+                      <textarea id="messageContent" rows="5" required
+                                class="w-full rounded-2xl px-4 py-3 border border-slate-200/70 dark:border-slate-800/70
+                                       bg-white dark:bg-slate-950/40 outline-none focus:ring-4 focus:ring-indigo-500/15"></textarea>
+                    </div>
+
+                    <button type="submit"
+                            class="h-11 px-5 rounded-2xl bg-indigo-600 text-white font-bold
+                                   hover:bg-indigo-700 active:scale-[0.99] transition">
+                      <i class="fas fa-paper-plane ml-2"></i> إرسال
+                    </button>
+                  </form>
+
+                  <div id="messageResponse" class="mt-4 hidden"></div>
+                </div>
+              </div>
+
+              <!-- Upload result -->
+              <div class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/70 shadow-sm">
+                <div class="p-5 border-b border-slate-200/70 dark:border-slate-800/70">
+                  <h2 class="text-lg font-bold">رفع نتيجة اللاعب</h2>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">رفع ملفات PDF/صور بشكل مرتب</p>
+                </div>
+                <div class="p-5">
+                  <form id="uploadResultForm" enctype="multipart/form-data" class="space-y-4">
+                    <div>
+                      <label class="block text-sm font-semibold mb-1">رقم هاتف اللاعب</label>
+                      <input type="tel" id="playerPhone" required
+                             class="w-full h-11 rounded-2xl px-4 border border-slate-200/70 dark:border-slate-800/70
+                                    bg-white dark:bg-slate-950/40 outline-none focus:ring-4 focus:ring-emerald-500/15">
+                    </div>
+
+                    <div>
+                      <label class="block text-sm font-semibold mb-1">اسم اللاعب (اختياري)</label>
+                      <input type="text" id="playerName"
+                             class="w-full h-11 rounded-2xl px-4 border border-slate-200/70 dark:border-slate-800/70
+                                    bg-white dark:bg-slate-950/40 outline-none focus:ring-4 focus:ring-emerald-500/15">
+                    </div>
+
+                    <div>
+                      <label class="block text-sm font-semibold mb-1">ملف النتيجة</label>
+                      <input type="file" id="resultFile" name="resultFile" required accept=".pdf,.jpg,.jpeg,.png"
+                             class="w-full rounded-2xl px-4 py-3 border border-slate-200/70 dark:border-slate-800/70
+                                    bg-white dark:bg-slate-950/40">
+                    </div>
+
+                    <button type="submit"
+                            class="h-11 px-5 rounded-2xl bg-emerald-600 text-white font-bold
+                                   hover:bg-emerald-700 active:scale-[0.99] transition">
+                      <i class="fas fa-cloud-upload-alt ml-2"></i> رفع
+                    </button>
+                  </form>
+
+                  <div id="uploadResponse" class="mt-4 hidden"></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Inquiries Tab -->
+          <section id="inquiriesTab" class="tab-content hidden space-y-4">
+            <div class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/70 shadow-sm">
+              <div class="p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div>
+                  <h2 class="text-lg font-bold">الاستفسارات</h2>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">فلترة (جديدة/تم الرد)</p>
+                </div>
+                <select id="inquiryFilter"
+                        class="h-10 rounded-2xl px-4 border border-slate-200/70 dark:border-slate-800/70
+                               bg-white dark:bg-slate-950/40 text-sm">
                   <option value="all">الكل</option>
                   <option value="new">جديدة</option>
                   <option value="responded">تم الرد</option>
                 </select>
               </div>
+
+              <div class="overflow-auto nice-scroll">
+                <table class="min-w-full text-sm">
+                  <thead class="bg-slate-50 dark:bg-slate-950/40 text-slate-500 dark:text-slate-400">
+                    <tr>
+                      <th class="px-5 py-3 text-right font-semibold">الاسم</th>
+                      <th class="px-5 py-3 text-right font-semibold">البريد</th>
+                      <th class="px-5 py-3 text-right font-semibold">الهاتف</th>
+                      <th class="px-5 py-3 text-right font-semibold">الرسالة</th>
+                      <th class="px-5 py-3 text-right font-semibold">الحالة</th>
+                      <th class="px-5 py-3 text-right font-semibold">الإجراءات</th>
+                    </tr>
+                  </thead>
+                  <tbody id="inquiriesTable" class="divide-y divide-slate-200/70 dark:divide-slate-800/70">
+                    <!-- سيتم ملؤه بالبيانات -->
+                  </tbody>
+                </table>
+              </div>
             </div>
-            <div class="overflow-x-auto">
-              <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
-                <thead class="bg-gray-50 dark:bg-gray-600">
-                  <tr>
-                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">الاسم</th>
-                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">البريد</th>
-                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">الهاتف</th>
-                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">الرسالة</th>
-                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">الحالة</th>
-                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">الإجراءات</th>
-                  </tr>
-                </thead>
-                <tbody id="inquiriesTable" class="bg-white dark:bg-gray-700 divide-y divide-gray-200 dark:divide-gray-600">
-                  <!-- سيتم ملؤه بالبيانات -->
-                </tbody>
-              </table>
+          </section>
+
+          <!-- Results Tab -->
+          <section id="resultsTab" class="tab-content hidden space-y-4">
+            <div class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/70 shadow-sm">
+              <div class="p-5">
+                <h2 class="text-lg font-bold">النتائج المعتمدة</h2>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">جدول بسيط + أزرار واضحة</p>
+              </div>
+
+              <div class="overflow-auto nice-scroll">
+                <table class="min-w-full text-sm">
+                  <thead class="bg-slate-50 dark:bg-slate-950/40 text-slate-500 dark:text-slate-400">
+                    <tr>
+                      <th class="px-5 py-3 text-right font-semibold">الاسم</th>
+                      <th class="px-5 py-3 text-right font-semibold">رقم الهاتف</th>
+                      <th class="px-5 py-3 text-right font-semibold">تاريخ القبول</th>
+                      <th class="px-5 py-3 text-right font-semibold">الإجراءات</th>
+                    </tr>
+                  </thead>
+                  <tbody id="resultsTable" class="divide-y divide-slate-200/70 dark:divide-slate-800/70">
+                    <!-- سيتم ملؤه بالبيانات -->
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
+          </section>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modals (نفس الـ IDs بتاعتك عشان الأحداث تفضل شغالة) -->
+  <!-- Edit Booking Modal -->
+  <div id="editBookingModal" class="fixed inset-0 hidden z-[70]">
+    <div class="absolute inset-0 bg-black/40"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+      <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/70 shadow-xl">
+        <div class="p-4 flex items-center justify-between border-b border-slate-200/70 dark:border-slate-800/70">
+          <h3 class="font-bold">تعديل حالة الطلب</h3>
+          <button id="closeBookingModal" class="h-10 w-10 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800">
+            <i class="fas fa-times"></i>
+          </button>
         </div>
-        
-        <!-- قسم النتائج المعتمدة -->
-        <div id="resultsTab" class="tab-content hidden">
-          <div class="bg-white dark:bg-gray-700 rounded-lg shadow overflow-hidden">
-            <div class="p-4 border-b border-gray-200 dark:border-gray-600">
-              <h2 class="text-xl font-bold text-gray-800 dark:text-white">النتائج المعتمدة</h2>
+        <div class="p-5">
+          <form id="editBookingForm" class="space-y-4">
+            <input type="hidden" id="editBookingId">
+            <div>
+              <label class="block text-sm font-semibold mb-1">الحالة</label>
+              <select id="editBookingStatus"
+                      class="w-full h-11 rounded-2xl px-4 border border-slate-200/70 dark:border-slate-800/70
+                             bg-white dark:bg-slate-950/40">
+                <option value="pending">قيد الانتظار</option>
+                <option value="approved">مقبول</option>
+                <option value="rejected">مرفوض</option>
+              </select>
             </div>
-            <div class="overflow-x-auto">
-              <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
-                <thead class="bg-gray-50 dark:bg-gray-600">
-                  <tr>
-                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">الاسم</th>
-                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">رقم الهاتف</th>
-                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">تاريخ القبول</th>
-                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">الإجراءات</th>
-                  </tr>
-                </thead>
-                <tbody id="resultsTable" class="bg-white dark:bg-gray-700 divide-y divide-gray-200 dark:divide-gray-600">
-                  <!-- سيتم ملؤه بالبيانات -->
-                </tbody>
-              </table>
+            <div>
+              <label class="block text-sm font-semibold mb-1">ملاحظات</label>
+              <textarea id="editBookingNotes" rows="3"
+                        class="w-full rounded-2xl px-4 py-3 border border-slate-200/70 dark:border-slate-800/70
+                               bg-white dark:bg-slate-950/40"></textarea>
             </div>
-          </div>
-        </div>
-      </main>
-    </div>
-  </div>
-
-  <!-- Modal لتعديل حالة الطلب -->
-  <div id="editBookingModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-50">
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md">
-      <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-        <h3 class="text-lg font-bold text-gray-800 dark:text-white">تعديل حالة الطلب</h3>
-        <button id="closeBookingModal" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-      <div class="p-4">
-        <form id="editBookingForm">
-          <input type="hidden" id="editBookingId">
-          <div class="mb-4">
-            <label class="block text-gray-700 dark:text-gray-300 mb-2">الحالة</label>
-            <select id="editBookingStatus" class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700">
-              <option value="pending">قيد الانتظار</option>
-              <option value="approved">مقبول</option>
-              <option value="rejected">مرفوض</option>
-            </select>
-          </div>
-          <div class="mb-4">
-            <label class="block text-gray-700 dark:text-gray-300 mb-2">ملاحظات</label>
-            <textarea id="editBookingNotes" rows="3" class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700"></textarea>
-          </div>
-          <div class="flex justify-end space-x-2">
-            <button type="button" id="cancelBookingEdit" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">إلغاء</button>
-            <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">حفظ</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal للرد على الاستفسار -->
-  <div id="respondInquiryModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-50">
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md">
-      <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-        <h3 class="text-lg font-bold text-gray-800 dark:text-white">الرد على الاستفسار</h3>
-        <button id="closeInquiryModal" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-      <div class="p-4">
-        <form id="respondInquiryForm">
-          <input type="hidden" id="respondInquiryId">
-          <div class="mb-4">
-            <label class="block text-gray-700 dark:text-gray-300 mb-2">الرد</label>
-            <textarea id="inquiryResponse" rows="4" class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700"></textarea>
-          </div>
-          <div class="flex justify-end space-x-2">
-            <button type="button" id="cancelInquiryResponse" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">إلغاء</button>
-            <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">إرسال الرد</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal لتعديل النتيجة -->
-  <div id="editResultModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-50">
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md">
-      <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-        <h3 class="text-lg font-bold text-gray-800 dark:text-white">تعديل النتيجة</h3>
-        <button id="closeResultModal" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-      <div class="p-4">
-       <form id="editResultForm" enctype="multipart/form-data">
-          <input type="hidden" id="editResultId" name="id">
-          <div class="mb-4">
-            <label class="block text-gray-700 dark:text-gray-300 mb-2">رقم هاتف اللاعب *</label>
-            <input type="tel" id="editPlayerPhone" name="playerPhone" class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700" required>
-          </div>
-          <div class="mb-4">
-            <label class="block text-gray-700 dark:text-gray-300 mb-2">اسم اللاعب</label>
-            <input type="text" id="editPlayerName" class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700">
-          </div>
-          <div class="mb-4">
-            <label class="block text-gray-700 dark:text-gray-300 mb-2">ملف النتيجة الجديدة (اختياري)</label>
-            <input type="file" id="editResultFile" name="editResultFile" class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700" accept=".pdf,.jpg,.jpeg,.png">
-          </div>
-          <div class="flex justify-end space-x-2">
-            <button type="button" id="cancelResultEdit" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">إلغاء</button>
-            <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">حفظ التعديلات</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal لحذف الطلب -->
-  <div id="deleteBookingModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-50">
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md">
-      <div class="p-4 border-b border-gray-200 dark:border-gray-700">
-        <h3 class="text-lg font-bold text-gray-800 dark:text-white">حذف الطلب</h3>
-      </div>
-      <div class="p-4">
-        <p class="text-gray-700 dark:text-gray-300 mb-4">هل أنت متأكد من حذف هذا الطلب؟</p>
-        <input type="hidden" id="deleteBookingId">
-        <div class="flex justify-end space-x-2">
-          <button type="button" id="cancelDeleteBooking" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">إلغاء</button>
-          <button type="button" id="confirmDeleteBooking" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">حذف</button>
+            <div class="flex justify-end gap-2">
+              <button type="button" id="cancelBookingEdit"
+                      class="h-11 px-4 rounded-2xl border border-slate-200/70 dark:border-slate-800/70 hover:bg-slate-50 dark:hover:bg-slate-800">
+                إلغاء
+              </button>
+              <button type="submit"
+                      class="h-11 px-4 rounded-2xl bg-indigo-600 text-white font-bold hover:bg-indigo-700">
+                حفظ
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Modal لحذف الاستفسار -->
-  <div id="deleteInquiryModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-50">
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md">
-      <div class="p-4 border-b border-gray-200 dark:border-gray-700">
-        <h3 class="text-lg font-bold text-gray-800 dark:text-white">حذف الاستفسار</h3>
-      </div>
-      <div class="p-4">
-        <p class="text-gray-700 dark:text-gray-300 mb-4">هل أنت متأكد من حذف هذا الاستفسار؟</p>
-        <input type="hidden" id="deleteInquiryId">
-        <div class="flex justify-end space-x-2">
-          <button type="button" id="cancelDeleteInquiry" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">إلغاء</button>
-          <button type="button" id="confirmDeleteInquiry" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">حذف</button>
+  <!-- Respond Inquiry Modal -->
+  <div id="respondInquiryModal" class="fixed inset-0 hidden z-[70]">
+    <div class="absolute inset-0 bg-black/40"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+      <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/70 shadow-xl">
+        <div class="p-4 flex items-center justify-between border-b border-slate-200/70 dark:border-slate-800/70">
+          <h3 class="font-bold">الرد على الاستفسار</h3>
+          <button id="closeInquiryModal" class="h-10 w-10 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="p-5">
+          <form id="respondInquiryForm" class="space-y-4">
+            <input type="hidden" id="respondInquiryId">
+            <div>
+              <label class="block text-sm font-semibold mb-1">الرد</label>
+              <textarea id="inquiryResponse" rows="4"
+                        class="w-full rounded-2xl px-4 py-3 border border-slate-200/70 dark:border-slate-800/70
+                               bg-white dark:bg-slate-950/40"></textarea>
+            </div>
+            <div class="flex justify-end gap-2">
+              <button type="button" id="cancelInquiryResponse"
+                      class="h-11 px-4 rounded-2xl border border-slate-200/70 dark:border-slate-800/70 hover:bg-slate-50 dark:hover:bg-slate-800">
+                إلغاء
+              </button>
+              <button type="submit"
+                      class="h-11 px-4 rounded-2xl bg-emerald-600 text-white font-bold hover:bg-emerald-700">
+                إرسال الرد
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
   </div>
 
- <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    console.log('Page elements:', {
-      pageTitle: document.getElementById('pageTitle'),
-      resultsTable: document.getElementById('resultsTable'),
-      tabs: document.querySelectorAll('[data-tab]')
-    });
-  });
+  <!-- Edit Result Modal -->
+  <div id="editResultModal" class="fixed inset-0 hidden z-[70]">
+    <div class="absolute inset-0 bg-black/40"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+      <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/70 shadow-xl">
+        <div class="p-4 flex items-center justify-between border-b border-slate-200/70 dark:border-slate-800/70">
+          <h3 class="font-bold">تعديل النتيجة</h3>
+          <button id="closeResultModal" class="h-10 w-10 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="p-5">
+          <form id="editResultForm" enctype="multipart/form-data" class="space-y-4">
+            <input type="hidden" id="editResultId" name="id">
+            <div>
+              <label class="block text-sm font-semibold mb-1">رقم هاتف اللاعب *</label>
+              <input type="tel" id="editPlayerPhone" name="playerPhone" required
+                     class="w-full h-11 rounded-2xl px-4 border border-slate-200/70 dark:border-slate-800/70
+                            bg-white dark:bg-slate-950/40">
+            </div>
+            <div>
+              <label class="block text-sm font-semibold mb-1">اسم اللاعب</label>
+              <input type="text" id="editPlayerName"
+                     class="w-full h-11 rounded-2xl px-4 border border-slate-200/70 dark:border-slate-800/70
+                            bg-white dark:bg-slate-950/40">
+            </div>
+            <div>
+              <label class="block text-sm font-semibold mb-1">ملف النتيجة الجديدة (اختياري)</label>
+              <input type="file" id="editResultFile" name="editResultFile" accept=".pdf,.jpg,.jpeg,.png"
+                     class="w-full rounded-2xl px-4 py-3 border border-slate-200/70 dark:border-slate-800/70
+                            bg-white dark:bg-slate-950/40">
+            </div>
+            <div class="flex justify-end gap-2">
+              <button type="button" id="cancelResultEdit"
+                      class="h-11 px-4 rounded-2xl border border-slate-200/70 dark:border-slate-800/70 hover:bg-slate-50 dark:hover:bg-slate-800">
+                إلغاء
+              </button>
+              <button type="submit"
+                      class="h-11 px-4 rounded-2xl bg-indigo-600 text-white font-bold hover:bg-indigo-700">
+                حفظ التعديلات
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  async function checkSession() {
-    try {
-      const response = await fetch('/admin/check-session');
-      const data = await response.json();
-      
-      if (!data.loggedIn) {
-        window.location.href = '/admin-login.html';
-      } else {
-        loadData();
-      }
-    } catch (error) {
-      console.error('Error checking session:', error);
-      window.location.href = '/admin-login.html';
+  <!-- Delete Booking Modal -->
+  <div id="deleteBookingModal" class="fixed inset-0 hidden z-[70]">
+    <div class="absolute inset-0 bg-black/40"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+      <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/70 shadow-xl">
+        <div class="p-4 border-b border-slate-200/70 dark:border-slate-800/70">
+          <h3 class="font-bold">حذف الطلب</h3>
+        </div>
+        <div class="p-5 space-y-4">
+          <p class="text-sm text-slate-600 dark:text-slate-300">هل أنت متأكد من حذف هذا الطلب؟</p>
+          <input type="hidden" id="deleteBookingId">
+          <div class="flex justify-end gap-2">
+            <button type="button" id="cancelDeleteBooking"
+                    class="h-11 px-4 rounded-2xl border border-slate-200/70 dark:border-slate-800/70 hover:bg-slate-50 dark:hover:bg-slate-800">
+              إلغاء
+            </button>
+            <button type="button" id="confirmDeleteBooking"
+                    class="h-11 px-4 rounded-2xl bg-rose-600 text-white font-bold hover:bg-rose-700">
+              حذف
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Inquiry Modal -->
+  <div id="deleteInquiryModal" class="fixed inset-0 hidden z-[70]">
+    <div class="absolute inset-0 bg-black/40"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+      <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/70 shadow-xl">
+        <div class="p-4 border-b border-slate-200/70 dark:border-slate-800/70">
+          <h3 class="font-bold">حذف الاستفسار</h3>
+        </div>
+        <div class="p-5 space-y-4">
+          <p class="text-sm text-slate-600 dark:text-slate-300">هل أنت متأكد من حذف هذا الاستفسار؟</p>
+          <input type="hidden" id="deleteInquiryId">
+          <div class="flex justify-end gap-2">
+            <button type="button" id="cancelDeleteInquiry"
+                    class="h-11 px-4 rounded-2xl border border-slate-200/70 dark:border-slate-800/70 hover:bg-slate-50 dark:hover:bg-slate-800">
+              إلغاء
+            </button>
+            <button type="button" id="confirmDeleteInquiry"
+                    class="h-11 px-4 rounded-2xl bg-rose-600 text-white font-bold hover:bg-rose-700">
+              حذف
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================
+    // Helpers (toasts + badges)
+    // =========================
+    document.getElementById('yearNow').textContent = new Date().getFullYear();
+
+    function toast(message, type = "success") {
+      const host = document.getElementById("toastHost");
+      const el = document.createElement("div");
+      const base = "px-4 py-3 rounded-2xl shadow-lg text-sm font-semibold border backdrop-blur";
+      const styles = type === "success"
+        ? "bg-emerald-600/95 text-white border-emerald-400/30"
+        : "bg-rose-600/95 text-white border-rose-400/30";
+
+      el.className = base + " " + styles;
+      el.textContent = message;
+      host.appendChild(el);
+
+      setTimeout(() => { el.style.opacity = "0"; el.style.transform = "translateY(-6px)"; el.style.transition = "all .25s"; }, 2500);
+      setTimeout(() => el.remove(), 2900);
     }
-  }
 
-  async function loadData() {
-    try {
-      const response = await fetch('/admin/data');
-      const data = await response.json();
-      
-      document.getElementById('totalBookings').textContent = data.bookings.length;
-      document.getElementById('newInquiries').textContent = data.inquiries.filter(i => i.status === 'new').length;
-      document.getElementById('approvedResults').textContent = data.results.length;
-      
-      const recentBookings = data.bookings.slice(0, 5);
-      const recentBookingsHtml = recentBookings.map(booking => `
-        <tr>
-          <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">${booking.name}</td>
-          <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">${booking.phone}</td>
-          <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">${booking.duration}</td>
-          <td class="px-4 py-3 whitespace-nowrap text-sm">
-            <span class="px-2 py-1 rounded-full text-xs ${getStatusClass(booking.status)}">
+    function getStatusClass(status) {
+      switch(status) {
+        case 'approved': return 'bg-emerald-600/10 text-emerald-700 dark:text-emerald-300 dark:bg-emerald-400/10';
+        case 'rejected': return 'bg-rose-600/10 text-rose-700 dark:text-rose-300 dark:bg-rose-400/10';
+        default: return 'bg-amber-600/10 text-amber-800 dark:text-amber-300 dark:bg-amber-400/10';
+      }
+    }
+
+    function getStatusText(status) {
+      switch(status) {
+        case 'approved': return 'مقبول';
+        case 'rejected': return 'مرفوض';
+        default: return 'قيد الانتظار';
+      }
+    }
+
+    function showSuccess(message) { toast(message, "success"); }
+    function showError(message) { toast(message, "error"); }
+
+    // =========================
+    // Dark mode (class strategy)
+    // =========================
+    const darkBtn = document.getElementById('toggleDarkMode');
+    function applyDarkModeFromStorage() {
+      const on = localStorage.getItem('darkMode') === 'true';
+      document.documentElement.classList.toggle('dark', on);
+    }
+    applyDarkModeFromStorage();
+
+    darkBtn.addEventListener('click', () => {
+      const next = !document.documentElement.classList.contains('dark');
+      document.documentElement.classList.toggle('dark', next);
+      localStorage.setItem('darkMode', next);
+    });
+
+    // =========================
+    // Sidebar (mobile slide)
+    // =========================
+    const sidebar = document.getElementById('sidebar');
+    const backdrop = document.getElementById('backdrop');
+    const openSidebarMobile = document.getElementById('openSidebarMobile');
+    const closeSidebarMobile = document.getElementById('closeSidebarMobile');
+
+    function openSidebar() {
+      sidebar.classList.remove('translate-x-full');
+      backdrop.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeSidebar() {
+      sidebar.classList.add('translate-x-full');
+      backdrop.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    openSidebarMobile.addEventListener('click', openSidebar);
+    closeSidebarMobile.addEventListener('click', closeSidebar);
+    backdrop.addEventListener('click', closeSidebar);
+
+    // =========================
+    // Tabs
+    // =========================
+    const navItems = document.querySelectorAll('.nav-item');
+
+    function activateTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+      const target = document.getElementById(tabId + 'Tab');
+      if (target) target.classList.remove('hidden');
+
+      navItems.forEach(i => i.classList.remove('bg-slate-100', 'dark:bg-slate-800/70'));
+      const active = document.querySelector(`.nav-item[data-tab="${tabId}"]`);
+      if (active) {
+        active.classList.add('bg-slate-100', 'dark:bg-slate-800/70');
+        document.getElementById('pageTitle').textContent = active.querySelector('span.font-semibold')?.textContent?.trim() || 'لوحة التحكم';
+      }
+
+      // اغلق السايدبار على الموبايل بعد اختيار التاب
+      if (window.innerWidth < 1024) closeSidebar();
+    }
+
+    navItems.forEach(tab => {
+      tab.addEventListener('click', (e) => {
+        e.preventDefault();
+        activateTab(tab.getAttribute('data-tab'));
+      });
+    });
+
+    // set default active
+    activateTab('dashboard');
+
+    // =========================
+    // Session + Data (نفس منطقك)
+    // =========================
+    async function checkSession() {
+      try {
+        const response = await fetch('/admin/check-session');
+        const data = await response.json();
+        if (!data.loggedIn) {
+          window.location.href = '/admin-login.html';
+        } else {
+          loadData();
+        }
+      } catch (error) {
+        console.error('Error checking session:', error);
+        window.location.href = '/admin-login.html';
+      }
+    }
+
+    async function loadData() {
+      try {
+        const response = await fetch('/admin/data');
+        const data = await response.json();
+
+        document.getElementById('totalBookings').textContent = data.bookings.length;
+        document.getElementById('newInquiries').textContent = data.inquiries.filter(i => i.status === 'new').length;
+        document.getElementById('approvedResults').textContent = data.results.length;
+
+        const recentBookings = data.bookings.slice(0, 5);
+        const recentBookingsHtml = recentBookings.map(booking => `
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-950/30 transition">
+            <td class="px-5 py-3 whitespace-nowrap">${booking.name}</td>
+            <td class="px-5 py-3 whitespace-nowrap">${booking.phone}</td>
+            <td class="px-5 py-3 whitespace-nowrap">${booking.duration}</td>
+            <td class="px-5 py-3 whitespace-nowrap">
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${getStatusClass(booking.status)}">
+                ${getStatusText(booking.status)}
+              </span>
+            </td>
+            <td class="px-5 py-3 whitespace-nowrap text-slate-600 dark:text-slate-300">
+              ${new Date(booking.createdAt).toLocaleDateString('ar-EG')}
+            </td>
+          </tr>
+        `).join('');
+        document.getElementById('recentBookings').innerHTML = recentBookingsHtml;
+
+        renderBookingsTable(data.bookings);
+        renderInquiriesTable(data.inquiries);
+        renderResultsTable(data.results);
+
+      } catch (error) {
+        console.error('Error loading data:', error);
+        showError('حدث خطأ أثناء تحميل البيانات، يرجى المحاولة مرة أخرى');
+      }
+    }
+
+    function renderBookingsTable(bookings) {
+      const filter = document.getElementById('bookingFilter').value;
+      let filteredBookings = bookings;
+      if (filter !== 'all') filteredBookings = bookings.filter(b => b.status === filter);
+
+      const bookingsHtml = filteredBookings.map(booking => `
+        <tr class="hover:bg-slate-50 dark:hover:bg-slate-950/30 transition">
+          <td class="px-5 py-3 whitespace-nowrap">${booking.name}</td>
+          <td class="px-5 py-3 whitespace-nowrap">${booking.email}</td>
+          <td class="px-5 py-3 whitespace-nowrap">${booking.phone}</td>
+          <td class="px-5 py-3 whitespace-nowrap">${booking.scrim}</td>
+          <td class="px-5 py-3 whitespace-nowrap">${booking.duration}</td>
+          <td class="px-5 py-3 whitespace-nowrap">${booking.age}</td>
+          <td class="px-5 py-3 whitespace-nowrap">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${getStatusClass(booking.status)}">
               ${getStatusText(booking.status)}
             </span>
           </td>
-          <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-            ${new Date(booking.createdAt).toLocaleDateString('ar-EG')}
+          <td class="px-5 py-3 whitespace-nowrap">
+            <button class="edit-booking inline-flex items-center gap-2 px-3 py-2 rounded-2xl text-indigo-600 dark:text-indigo-300 hover:bg-indigo-600/10"
+                    data-id="${booking.id}" data-status="${booking.status}" data-notes="${booking.notes || ''}">
+              <i class="fas fa-edit"></i><span class="hidden sm:inline">تعديل</span>
+            </button>
+            <button class="delete-booking inline-flex items-center gap-2 px-3 py-2 rounded-2xl text-rose-600 dark:text-rose-300 hover:bg-rose-600/10"
+                    data-id="${booking.id}">
+              <i class="fas fa-trash"></i><span class="hidden sm:inline">حذف</span>
+            </button>
+            ${booking.gameVideo ? `
+              <a href="${booking.gameVideo}" target="_blank"
+                 class="inline-flex items-center gap-2 px-3 py-2 rounded-2xl text-sky-600 dark:text-sky-300 hover:bg-sky-600/10">
+                <i class="fas fa-eye"></i><span class="hidden sm:inline">فيديو</span>
+              </a>
+              <a href="${booking.gameVideo}" download
+                 class="inline-flex items-center gap-2 px-3 py-2 rounded-2xl text-emerald-600 dark:text-emerald-300 hover:bg-emerald-600/10">
+                <i class="fas fa-download"></i><span class="hidden sm:inline">تحميل</span>
+              </a>
+            ` : ''}
           </td>
         </tr>
       `).join('');
-      document.getElementById('recentBookings').innerHTML = recentBookingsHtml;
-      
-      renderBookingsTable(data.bookings);
-      renderInquiriesTable(data.inquiries);
-      renderResultsTable(data.results);
-      
-    } catch (error) {
-      console.error('Error loading data:', error);
-      showError('حدث خطأ أثناء تحميل البيانات، يرجى المحاولة مرة أخرى');
-    }
-  }
-  
-  function renderBookingsTable(bookings) {
-    const filter = document.getElementById('bookingFilter').value;
-    let filteredBookings = bookings;
-    
-    if (filter !== 'all') {
-      filteredBookings = bookings.filter(b => b.status === filter);
-    }
-    
-    const bookingsHtml = filteredBookings.map(booking => `
-      <tr>
-        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">${booking.name}</td>
-        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">${booking.email}</td>
-        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">${booking.phone}</td>
-        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">${booking.scrim}</td>
-        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">${booking.duration}</td>
-        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">${booking.age}</td>
-        <td class="px-4 py-3 whitespace-nowrap text-sm">
-          <span class="px-2 py-1 rounded-full text-xs ${getStatusClass(booking.status)}">
-            ${getStatusText(booking.status)}
-          </span>
-        </td>
-        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-          <button class="edit-booking p-1 text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 mr-2" 
-                  data-id="${booking.id}" data-status="${booking.status}" data-notes="${booking.notes || ''}">
-            <i class="fas fa-edit"></i>
-          </button>
-          <button class="delete-booking p-1 text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 mr-2" 
-                  data-id="${booking.id}">
-            <i class="fas fa-trash"></i>
-          </button>
-          ${booking.gameVideo ? `
-            <span class="mx-1 text-gray-400">|</span>
-            <a href="${booking.gameVideo}" target="_blank" class="p-1 text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300" title="عرض الفيديو">
-              <i class="fas fa-eye"></i>
-            </a>
-            <a href="${booking.gameVideo}" download class="p-1 text-green-600 dark:text-green-400 hover:text-green-900 dark:hover:text-green-300" title="تحميل الفيديو">
-              <i class="fas fa-download"></i>
-            </a>
-          ` : ''}
-        </td>
-      </tr>
-    `).join('');
-    
-    document.getElementById('bookingsTable').innerHTML = bookingsHtml;
-    
-    document.querySelectorAll('.edit-booking').forEach(button => {
-      button.addEventListener('click', () => {
-        const id = button.getAttribute('data-id');
-        const status = button.getAttribute('data-status');
-        const notes = button.getAttribute('data-notes');
-        
-        document.getElementById('editBookingId').value = id;
-        document.getElementById('editBookingStatus').value = status;
-        document.getElementById('editBookingNotes').value = notes;
-        
-        document.getElementById('editBookingModal').classList.remove('hidden');
-      });
-    });
-    
-    document.querySelectorAll('.delete-booking').forEach(button => {
-      button.addEventListener('click', () => {
-        const id = button.getAttribute('data-id');
-        document.getElementById('deleteBookingId').value = id;
-        document.getElementById('deleteBookingModal').classList.remove('hidden');
-      });
-    });
-  }
-  
-  function renderInquiriesTable(inquiries) {
-    const filter = document.getElementById('inquiryFilter').value;
-    let filteredInquiries = inquiries;
-    
-    if (filter !== 'all') {
-      filteredInquiries = inquiries.filter(i => 
-        filter === 'new' ? i.status === 'new' : i.status !== 'new'
-      );
-    }
-    
-    const inquiriesHtml = filteredInquiries.map(inquiry => `
-      <tr>
-        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">${inquiry.name}</td>
-        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">${inquiry.email}</td>
-        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">${inquiry.phone}</td>
-        <td class="px-4 py-3 text-sm text-gray-800 dark:text-gray-200">
-          <div class="max-w-xs truncate">${inquiry.message}</div>
-        </td>
-        <td class="px-4 py-3 whitespace-nowrap text-sm">
-          <span class="px-2 py-1 rounded-full text-xs ${inquiry.status === 'new' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'}">
-            ${inquiry.status === 'new' ? 'جديد' : 'تم الرد'}
-          </span>
-        </td>
-        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-          ${inquiry.status === 'new' ? `
-            <button class="respond-inquiry p-1 text-green-600 dark:text-green-400 hover:text-green-900 dark:hover:text-green-300 mr-2" 
-                    data-id="${inquiry.id}">
-              <i class="fas fa-reply"></i>
-            </button>
-          ` : ''}
-          <button class="delete-inquiry p-1 text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 mr-2" 
-                  data-id="${inquiry.id}">
-            <i class="fas fa-trash"></i>
-          </button>
-          ${inquiry.response ? `
-            <button class="view-response p-1 text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300" 
-                    data-response="${inquiry.response}">
-              <i class="fas fa-eye"></i>
-            </button>
-          ` : ''}
-        </td>
-      </tr>
-    `).join('');
-    
-    document.getElementById('inquiriesTable').innerHTML = inquiriesHtml;
-    
-    document.querySelectorAll('.respond-inquiry').forEach(button => {
-      button.addEventListener('click', () => {
-        const id = button.getAttribute('data-id');
-        document.getElementById('respondInquiryId').value = id;
-        document.getElementById('respondInquiryModal').classList.remove('hidden');
-      });
-    });
-    
-    document.querySelectorAll('.view-response').forEach(button => {
-      button.addEventListener('click', () => {
-        const response = button.getAttribute('data-response');
-        alert('الرد:\n\n' + response);
-      });
-    });
-    
-    document.querySelectorAll('.delete-inquiry').forEach(button => {
-      button.addEventListener('click', () => {
-        const id = button.getAttribute('data-id');
-        document.getElementById('deleteInquiryId').value = id;
-        document.getElementById('deleteInquiryModal').classList.remove('hidden');
-      });
-    });
-  }
-  
-  function renderResultsTable(results) {
-    const resultsTable = document.getElementById('resultsTable');
-    
-    if (!results || !Array.isArray(results)) {
-      resultsTable.innerHTML = `
-        <tr>
-          <td colspan="4" class="text-center py-4 text-red-500">
-            خطأ في تحميل النتائج
-          </td>
-        </tr>
-      `;
-      return;
-    }
 
-    if (results.length === 0) {
-      resultsTable.innerHTML = `
-        <tr>
-          <td colspan="4" class="text-center py-4 text-gray-500">
-            لا توجد نتائج معتمدة حتى الآن
-          </td>
-        </tr>
-      `;
-      return;
-    }
+      document.getElementById('bookingsTable').innerHTML = bookingsHtml;
 
-    const resultsHtml = results.map(result => {
-      const playerName = result.playerName || 'غير معروف';
-      const playerPhone = result.playerPhone || 'غير متوفر';
-      const uploadedAt = result.uploadedAt ? new Date(result.uploadedAt).toLocaleDateString('ar-EG') : 'غير معروف';
-      
-      return `
-        <tr>
-          <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">${playerName}</td>
-          <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">${playerPhone}</td>
-          <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">${uploadedAt}</td>
-          <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-            ${result.fileUrl ? `
-              <a href="${result.fileUrl}" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline mr-2">
-                <i class="fas fa-eye"></i> عرض
-              </a>
-            ` : ''}
-            <button class="edit-result p-1 text-yellow-600 dark:text-yellow-400 hover:text-yellow-900 dark:hover:text-yellow-300 mr-2" 
-                    data-id="${result.id}" data-phone="${playerPhone}" data-name="${playerName}">
-              <i class="fas fa-edit"></i> تعديل
-            </button>
-            <button class="delete-result p-1 text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300" 
-                    data-id="${result.id}">
-              <i class="fas fa-trash"></i> حذف
-            </button>
-          </td>
-        </tr>
-      `;
-    }).join('');
-    
-    resultsTable.innerHTML = resultsHtml;
-    bindResultEvents();
-  }
-
-  function bindResultEvents() {
-    document.querySelectorAll('.edit-result').forEach(button => {
-      button.addEventListener('click', (e) => {
-        const id = button.getAttribute('data-id');
-        const phone = button.getAttribute('data-phone');
-        const name = button.getAttribute('data-name');
-        
-        document.getElementById('editResultId').value = id;
-        document.getElementById('editPlayerPhone').value = phone;
-        document.getElementById('editPlayerName').value = name || '';
-        
-        document.getElementById('editResultModal').classList.remove('hidden');
-      });
-    });
-    
-    document.querySelectorAll('.delete-result').forEach(button => {
-      button.addEventListener('click', handleDeleteResult);
-    });
-  }
-
-  async function handleDeleteResult(e) {
-    const id = e.currentTarget.getAttribute('data-id');
-    if (confirm('هل أنت متأكد من حذف هذه النتيجة؟')) {
-      try {
-        const response = await fetch(`/admin/delete-result/${id}`, {
-          method: 'DELETE'
+      document.querySelectorAll('.edit-booking').forEach(button => {
+        button.addEventListener('click', () => {
+          document.getElementById('editBookingId').value = button.getAttribute('data-id');
+          document.getElementById('editBookingStatus').value = button.getAttribute('data-status');
+          document.getElementById('editBookingNotes').value = button.getAttribute('data-notes') || '';
+          document.getElementById('editBookingModal').classList.remove('hidden');
         });
+      });
+
+      document.querySelectorAll('.delete-booking').forEach(button => {
+        button.addEventListener('click', () => {
+          document.getElementById('deleteBookingId').value = button.getAttribute('data-id');
+          document.getElementById('deleteBookingModal').classList.remove('hidden');
+        });
+      });
+    }
+
+    function renderInquiriesTable(inquiries) {
+      const filter = document.getElementById('inquiryFilter').value;
+      let filtered = inquiries;
+      if (filter !== 'all') {
+        filtered = inquiries.filter(i => filter === 'new' ? i.status === 'new' : i.status !== 'new');
+      }
+
+      const inquiriesHtml = filtered.map(inquiry => `
+        <tr class="hover:bg-slate-50 dark:hover:bg-slate-950/30 transition">
+          <td class="px-5 py-3 whitespace-nowrap">${inquiry.name}</td>
+          <td class="px-5 py-3 whitespace-nowrap">${inquiry.email}</td>
+          <td class="px-5 py-3 whitespace-nowrap">${inquiry.phone}</td>
+          <td class="px-5 py-3">
+            <div class="max-w-xs truncate text-slate-700 dark:text-slate-200">${inquiry.message}</div>
+          </td>
+          <td class="px-5 py-3 whitespace-nowrap">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${
+              inquiry.status === 'new'
+              ? 'bg-amber-600/10 text-amber-800 dark:text-amber-300 dark:bg-amber-400/10'
+              : 'bg-emerald-600/10 text-emerald-700 dark:text-emerald-300 dark:bg-emerald-400/10'
+            }">
+              ${inquiry.status === 'new' ? 'جديد' : 'تم الرد'}
+            </span>
+          </td>
+          <td class="px-5 py-3 whitespace-nowrap">
+            ${inquiry.status === 'new' ? `
+              <button class="respond-inquiry inline-flex items-center gap-2 px-3 py-2 rounded-2xl text-emerald-600 dark:text-emerald-300 hover:bg-emerald-600/10"
+                      data-id="${inquiry.id}">
+                <i class="fas fa-reply"></i><span class="hidden sm:inline">رد</span>
+              </button>
+            ` : ''}
+            <button class="delete-inquiry inline-flex items-center gap-2 px-3 py-2 rounded-2xl text-rose-600 dark:text-rose-300 hover:bg-rose-600/10"
+                    data-id="${inquiry.id}">
+              <i class="fas fa-trash"></i><span class="hidden sm:inline">حذف</span>
+            </button>
+            ${inquiry.response ? `
+              <button class="view-response inline-flex items-center gap-2 px-3 py-2 rounded-2xl text-sky-600 dark:text-sky-300 hover:bg-sky-600/10"
+                      data-response="${inquiry.response}">
+                <i class="fas fa-eye"></i><span class="hidden sm:inline">عرض</span>
+              </button>
+            ` : ''}
+          </td>
+        </tr>
+      `).join('');
+
+      document.getElementById('inquiriesTable').innerHTML = inquiriesHtml;
+
+      document.querySelectorAll('.respond-inquiry').forEach(button => {
+        button.addEventListener('click', () => {
+          document.getElementById('respondInquiryId').value = button.getAttribute('data-id');
+          document.getElementById('respondInquiryModal').classList.remove('hidden');
+        });
+      });
+
+      document.querySelectorAll('.view-response').forEach(button => {
+        button.addEventListener('click', () => {
+          alert('الرد:\n\n' + (button.getAttribute('data-response') || ''));
+        });
+      });
+
+      document.querySelectorAll('.delete-inquiry').forEach(button => {
+        button.addEventListener('click', () => {
+          document.getElementById('deleteInquiryId').value = button.getAttribute('data-id');
+          document.getElementById('deleteInquiryModal').classList.remove('hidden');
+        });
+      });
+    }
+
+    function renderResultsTable(results) {
+      const resultsTable = document.getElementById('resultsTable');
+
+      if (!results || !Array.isArray(results)) {
+        resultsTable.innerHTML = `
+          <tr><td colspan="4" class="px-5 py-6 text-center text-rose-600">خطأ في تحميل النتائج</td></tr>
+        `;
+        return;
+      }
+
+      if (results.length === 0) {
+        resultsTable.innerHTML = `
+          <tr><td colspan="4" class="px-5 py-6 text-center text-slate-500 dark:text-slate-400">لا توجد نتائج معتمدة حتى الآن</td></tr>
+        `;
+        return;
+      }
+
+      const resultsHtml = results.map(result => {
+        const playerName = result.playerName || 'غير معروف';
+        const playerPhone = result.playerPhone || 'غير متوفر';
+        const uploadedAt = result.uploadedAt ? new Date(result.uploadedAt).toLocaleDateString('ar-EG') : 'غير معروف';
+
+        return `
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-950/30 transition">
+            <td class="px-5 py-3 whitespace-nowrap">${playerName}</td>
+            <td class="px-5 py-3 whitespace-nowrap">${playerPhone}</td>
+            <td class="px-5 py-3 whitespace-nowrap text-slate-600 dark:text-slate-300">${uploadedAt}</td>
+            <td class="px-5 py-3 whitespace-nowrap">
+              ${result.fileUrl ? `
+                <a href="${result.fileUrl}" target="_blank"
+                   class="inline-flex items-center gap-2 px-3 py-2 rounded-2xl text-sky-600 dark:text-sky-300 hover:bg-sky-600/10">
+                  <i class="fas fa-eye"></i><span class="hidden sm:inline">عرض</span>
+                </a>
+              ` : ''}
+              <button class="edit-result inline-flex items-center gap-2 px-3 py-2 rounded-2xl text-amber-700 dark:text-amber-300 hover:bg-amber-600/10"
+                      data-id="${result.id}" data-phone="${playerPhone}" data-name="${playerName}">
+                <i class="fas fa-edit"></i><span class="hidden sm:inline">تعديل</span>
+              </button>
+              <button class="delete-result inline-flex items-center gap-2 px-3 py-2 rounded-2xl text-rose-600 dark:text-rose-300 hover:bg-rose-600/10"
+                      data-id="${result.id}">
+                <i class="fas fa-trash"></i><span class="hidden sm:inline">حذف</span>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      resultsTable.innerHTML = resultsHtml;
+      bindResultEvents();
+    }
+
+    function bindResultEvents() {
+      document.querySelectorAll('.edit-result').forEach(button => {
+        button.addEventListener('click', () => {
+          document.getElementById('editResultId').value = button.getAttribute('data-id');
+          document.getElementById('editPlayerPhone').value = button.getAttribute('data-phone') || '';
+          document.getElementById('editPlayerName').value = button.getAttribute('data-name') || '';
+          document.getElementById('editResultModal').classList.remove('hidden');
+        });
+      });
+
+      document.querySelectorAll('.delete-result').forEach(button => {
+        button.addEventListener('click', handleDeleteResult);
+      });
+    }
+
+    async function handleDeleteResult(e) {
+      const id = e.currentTarget.getAttribute('data-id');
+      if (confirm('هل أنت متأكد من حذف هذه النتيجة؟')) {
+        try {
+          const response = await fetch(`/admin/delete-result/${id}`, { method: 'DELETE' });
+          const data = await response.json();
+          if (data.success) {
+            showSuccess('تم حذف النتيجة بنجاح');
+            loadData();
+          } else {
+            showError(data.message || 'حدث خطأ أثناء حذف النتيجة');
+          }
+        } catch (error) {
+          console.error('Error deleting result:', error);
+          showError('حدث خطأ أثناء حذف النتيجة');
+        }
+      }
+    }
+
+    // Filters
+    document.getElementById('bookingFilter').addEventListener('change', loadData);
+    document.getElementById('inquiryFilter').addEventListener('change', loadData);
+
+    // Modals close buttons
+    document.getElementById('closeBookingModal').addEventListener('click', () => document.getElementById('editBookingModal').classList.add('hidden'));
+    document.getElementById('cancelBookingEdit').addEventListener('click', () => document.getElementById('editBookingModal').classList.add('hidden'));
+    document.getElementById('cancelDeleteBooking').addEventListener('click', () => document.getElementById('deleteBookingModal').classList.add('hidden'));
+
+    document.getElementById('closeInquiryModal').addEventListener('click', () => document.getElementById('respondInquiryModal').classList.add('hidden'));
+    document.getElementById('cancelInquiryResponse').addEventListener('click', () => document.getElementById('respondInquiryModal').classList.add('hidden'));
+    document.getElementById('cancelDeleteInquiry').addEventListener('click', () => document.getElementById('deleteInquiryModal').classList.add('hidden'));
+
+    document.getElementById('closeResultModal').addEventListener('click', () => document.getElementById('editResultModal').classList.add('hidden'));
+    document.getElementById('cancelResultEdit').addEventListener('click', () => document.getElementById('editResultModal').classList.add('hidden'));
+
+    // Submit handlers (نفس endpoints بتاعتك)
+    document.getElementById('editBookingForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('editBookingId').value;
+      const status = document.getElementById('editBookingStatus').value;
+      const notes = document.getElementById('editBookingNotes').value;
+
+      try {
+        const response = await fetch(`/admin/update-booking/${id}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status, notes })
+        });
+
         const data = await response.json();
-        
         if (data.success) {
-          showSuccess('تم حذف النتيجة بنجاح');
+          document.getElementById('editBookingModal').classList.add('hidden');
+          showSuccess('تم تحديث حالة الطلب بنجاح');
           loadData();
         } else {
-          showError(data.message || 'حدث خطأ أثناء حذف النتيجة');
+          showError(data.message || 'حدث خطأ أثناء حفظ التعديلات');
         }
       } catch (error) {
-        console.error('Error deleting result:', error);
-        showError('حدث خطأ أثناء حذف النتيجة');
-      }
-    }
-  }
-  
-  function getStatusClass(status) {
-    switch(status) {
-      case 'approved': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
-      case 'rejected': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
-      default: return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
-    }
-  }
-  
-  function getStatusText(status) {
-    switch(status) {
-      case 'approved': return 'مقبول';
-      case 'rejected': return 'مرفوض';
-      default: return 'قيد الانتظار';
-    }
-  }
-  
-  function showSuccess(message) {
-    const alertDiv = document.createElement('div');
-    alertDiv.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50';
-    alertDiv.textContent = message;
-    document.body.appendChild(alertDiv);
-    
-    setTimeout(() => {
-      alertDiv.remove();
-    }, 3000);
-  }
-  
-  function showError(message) {
-    const alertDiv = document.createElement('div');
-    alertDiv.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded shadow-lg z-50';
-    alertDiv.textContent = message;
-    document.body.appendChild(alertDiv);
-    
-    setTimeout(() => {
-      alertDiv.remove();
-    }, 3000);
-  }
-  
-  document.getElementById('toggleDarkMode').addEventListener('click', () => {
-    document.documentElement.classList.toggle('dark');
-    localStorage.setItem('darkMode', document.documentElement.classList.contains('dark'));
-  });
-  
-  if (localStorage.getItem('darkMode') === 'true') {
-    document.documentElement.classList.add('dark');
-  }
-  
-  function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    const mainContent = document.querySelector('.main-content');
-    
-    sidebar.classList.toggle('collapsed');
-    
-    if (window.innerWidth > 768) {
-      if (sidebar.classList.contains('collapsed')) {
-        mainContent.classList.remove('mr-64');
-        mainContent.classList.add('mr-20');
-      } else {
-        mainContent.classList.remove('mr-20');
-        mainContent.classList.add('mr-64');
-      }
-    }
-  }
-  
-  document.getElementById('toggleSidebar').addEventListener('click', toggleSidebar);
-  document.getElementById('mobileToggleSidebar').addEventListener('click', toggleSidebar);
-  
-  document.querySelectorAll('[data-tab]').forEach(tab => {
-    tab.addEventListener('click', (e) => {
-      e.preventDefault();
-      const tabId = tab.getAttribute('data-tab');
-      
-      document.querySelectorAll('.tab-content').forEach(content => {
-        content.classList.add('hidden');
-      });
-      
-      document.querySelectorAll('[data-tab]').forEach(t => {
-        t.classList.remove('active-tab');
-        t.classList.remove('bg-gray-700');
-      });
-      
-      document.getElementById(`${tabId}Tab`).classList.remove('hidden');
-      
-      tab.classList.add('active-tab');
-      tab.classList.add('bg-gray-700');
-      
-      const tabTextElement = tab.querySelector('.sidebar-text');
-      if (tabTextElement) {
-        const pageTitleElement = document.getElementById('pageTitle');
-        if (pageTitleElement) {
-          pageTitleElement.textContent = tabTextElement.textContent.trim();
-        }
+        console.error('Error updating booking:', error);
+        showError('حدث خطأ أثناء حفظ التعديلات');
       }
     });
-  });
-  
-  document.getElementById('bookingFilter').addEventListener('change', () => {
-    loadData();
-  });
-  
-  document.getElementById('inquiryFilter').addEventListener('change', () => {
-    loadData();
-  });
-  
-  document.getElementById('editBookingForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const id = document.getElementById('editBookingId').value;
-    const status = document.getElementById('editBookingStatus').value;
-    const notes = document.getElementById('editBookingNotes').value;
-    
-    try {
-      const response = await fetch(`/admin/update-booking/${id}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ status, notes })
-      });
-      
-      const data = await response.json();
-      
-      if (data.success) {
-        document.getElementById('editBookingModal').classList.add('hidden');
-        showSuccess('تم تحديث حالة الطلب بنجاح');
-        loadData();
-      } else {
-        showError(data.message || 'حدث خطأ أثناء حفظ التعديلات');
-      }
-    } catch (error) {
-      console.error('Error updating booking:', error);
-      showError('حدث خطأ أثناء حفظ التعديلات');
-    }
-  });
-  
-  document.getElementById('sendMessageForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const email = document.getElementById('playerEmail').value;
-    const message = document.getElementById('messageContent').value;
-    const senderName = document.getElementById('senderName').value || 'STORE King个ESPORTSツ';
-    
-    try {
-      const response = await fetch('/admin/send-message', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, message, senderName })
-      });
-      
-      const data = await response.json();
-      
-      const responseDiv = document.getElementById('messageResponse');
-      responseDiv.classList.remove('hidden');
-      
-      if (data.success) {
-        responseDiv.innerHTML = `
-          <div class="bg-green-100 dark:bg-green-900 border border-green-400 dark:border-green-700 text-green-700 dark:text-green-200 px-4 py-3 rounded">
-            ${data.message}
-          </div>
-        `;
-        document.getElementById('sendMessageForm').reset();
-        showSuccess('تم إرسال الرسالة بنجاح');
-      } else {
-        responseDiv.innerHTML = `
-          <div class="bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-200 px-4 py-3 rounded">
-            ${data.message}
-          </div>
-        `;
-        showError(data.message || 'حدث خطأ أثناء إرسال الرسالة');
-      }
-    } catch (error) {
-      console.error('Error sending message:', error);
-      const responseDiv = document.getElementById('messageResponse');
-      responseDiv.classList.remove('hidden');
-      responseDiv.innerHTML = `
-        <div class="bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-200 px-4 py-3 rounded">
-          حدث خطأ أثناء إرسال الرسالة
-        </div>
-      `;
-      showError('حدث خطأ أثناء إرسال الرسالة');
-    }
-  });
 
-  document.getElementById('uploadResultForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const formData = new FormData();
-    formData.append('playerPhone', document.getElementById('playerPhone').value);
-    formData.append('playerName', document.getElementById('playerName').value);
-    formData.append('resultFile', document.getElementById('resultFile').files[0]);
-    
-    try {
-      const response = await fetch('/admin/upload-result', {
-        method: 'POST',
-        body: formData
-      });
-      
-      const data = await response.json();
-      
-      const responseDiv = document.getElementById('uploadResponse');
-      responseDiv.classList.remove('hidden');
-      
-      if (data.success) {
-        responseDiv.innerHTML = `
-          <div class="bg-green-100 dark:bg-green-900 border border-green-400 dark:border-green-700 text-green-700 dark:text-green-200 px-4 py-3 rounded">
-            ${data.message}
-          </div>
-        `;
-        document.getElementById('uploadResultForm').reset();
-        showSuccess('تم رفع النتيجة بنجاح');
-        loadData();
-      } else {
-        responseDiv.innerHTML = `
-          <div class="bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-200 px-4 py-3 rounded">
-            ${data.message}
-          </div>
-        `;
-        showError(data.message || 'حدث خطأ أثناء رفع الملف');
+    document.getElementById('sendMessageForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('playerEmail').value;
+      const message = document.getElementById('messageContent').value;
+      const senderName = document.getElementById('senderName').value || 'STORE King个ESPORTSツ';
+
+      try {
+        const response = await fetch('/admin/send-message', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, message, senderName })
+        });
+
+        const data = await response.json();
+        const responseDiv = document.getElementById('messageResponse');
+        responseDiv.classList.remove('hidden');
+
+        if (data.success) {
+          responseDiv.innerHTML = `<div class="rounded-2xl border border-emerald-400/30 bg-emerald-600/10 text-emerald-800 dark:text-emerald-200 px-4 py-3">${data.message}</div>`;
+          document.getElementById('sendMessageForm').reset();
+          showSuccess('تم إرسال الرسالة بنجاح');
+        } else {
+          responseDiv.innerHTML = `<div class="rounded-2xl border border-rose-400/30 bg-rose-600/10 text-rose-800 dark:text-rose-200 px-4 py-3">${data.message}</div>`;
+          showError(data.message || 'حدث خطأ أثناء إرسال الرسالة');
+        }
+      } catch (error) {
+        console.error('Error sending message:', error);
+        const responseDiv = document.getElementById('messageResponse');
+        responseDiv.classList.remove('hidden');
+        responseDiv.innerHTML = `<div class="rounded-2xl border border-rose-400/30 bg-rose-600/10 text-rose-800 dark:text-rose-200 px-4 py-3">حدث خطأ أثناء إرسال الرسالة</div>`;
+        showError('حدث خطأ أثناء إرسال الرسالة');
       }
-    } catch (error) {
-      console.error('Error uploading result:', error);
-      const responseDiv = document.getElementById('uploadResponse');
-      responseDiv.classList.remove('hidden');
-      responseDiv.innerHTML = `
-        <div class="bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-200 px-4 py-3 rounded">
-          حدث خطأ أثناء رفع الملف
-        </div>
-      `;
-      showError('حدث خطأ أثناء رفع الملف');
-    }
-  });
-  
-  document.getElementById('editResultForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const submitBtn = e.target.querySelector('button[type="submit"]');
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = 'جاري الحفظ...';
-    
-    try {
-      const formData = new FormData(e.target);
-      const id = document.getElementById('editResultId').value;
-      const playerPhone = document.getElementById('editPlayerPhone').value;
-      
-      if (!id || !playerPhone) {
-        throw new Error('معرّف النتيجة ورقم الهاتف مطلوبان');
+    });
+
+    document.getElementById('uploadResultForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData();
+      formData.append('playerPhone', document.getElementById('playerPhone').value);
+      formData.append('playerName', document.getElementById('playerName').value);
+      formData.append('resultFile', document.getElementById('resultFile').files[0]);
+
+      try {
+        const response = await fetch('/admin/upload-result', { method: 'POST', body: formData });
+        const data = await response.json();
+
+        const responseDiv = document.getElementById('uploadResponse');
+        responseDiv.classList.remove('hidden');
+
+        if (data.success) {
+          responseDiv.innerHTML = `<div class="rounded-2xl border border-emerald-400/30 bg-emerald-600/10 text-emerald-800 dark:text-emerald-200 px-4 py-3">${data.message}</div>`;
+          document.getElementById('uploadResultForm').reset();
+          showSuccess('تم رفع النتيجة بنجاح');
+          loadData();
+        } else {
+          responseDiv.innerHTML = `<div class="rounded-2xl border border-rose-400/30 bg-rose-600/10 text-rose-800 dark:text-rose-200 px-4 py-3">${data.message}</div>`;
+          showError(data.message || 'حدث خطأ أثناء رفع الملف');
+        }
+      } catch (error) {
+        console.error('Error uploading result:', error);
+        const responseDiv = document.getElementById('uploadResponse');
+        responseDiv.classList.remove('hidden');
+        responseDiv.innerHTML = `<div class="rounded-2xl border border-rose-400/30 bg-rose-600/10 text-rose-800 dark:text-rose-200 px-4 py-3">حدث خطأ أثناء رفع الملف</div>`;
+        showError('حدث خطأ أثناء رفع الملف');
       }
-      
-      formData.append('id', id);
-      formData.append('playerPhone', playerPhone);
-      
-      const playerName = document.getElementById('editPlayerName').value;
-      if (playerName) {
-        formData.append('playerName', playerName);
+    });
+
+    document.getElementById('editResultForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'جاري الحفظ...';
+
+      try {
+        const formData = new FormData(e.target);
+        const id = document.getElementById('editResultId').value;
+        const playerPhone = document.getElementById('editPlayerPhone').value;
+
+        if (!id || !playerPhone) throw new Error('معرّف النتيجة ورقم الهاتف مطلوبان');
+
+        formData.append('id', id);
+        formData.append('playerPhone', playerPhone);
+
+        const playerName = document.getElementById('editPlayerName').value;
+        if (playerName) formData.append('playerName', playerName);
+
+        const response = await fetch('/admin/update-result', { method: 'POST', body: formData });
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'حدث خطأ في الخادم');
+        }
+
+        const data = await response.json();
+        if (data.success) {
+          document.getElementById('editResultModal').classList.add('hidden');
+          showSuccess(data.message || 'تم تحديث النتيجة بنجاح');
+          loadData();
+        } else {
+          throw new Error(data.message || 'فشل تحديث النتيجة');
+        }
+      } catch (error) {
+        console.error('Update failed:', error);
+        showError(error.message || 'حدث خطأ أثناء تحديث النتيجة');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'حفظ التعديلات';
       }
-      
-      for (let [key, value] of formData.entries()) {
-        console.log(key, value);
+    });
+
+    document.getElementById('respondInquiryForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('respondInquiryId').value;
+      const responseText = document.getElementById('inquiryResponse').value;
+
+      try {
+        const res = await fetch(`/admin/update-inquiry/${id}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: 'responded', response: responseText })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('respondInquiryModal').classList.add('hidden');
+          document.getElementById('inquiryResponse').value = '';
+          showSuccess('تم إرسال الرد بنجاح');
+          loadData();
+        } else {
+          showError(data.message || 'حدث خطأ أثناء إرسال الرد');
+        }
+      } catch (error) {
+        console.error('Error responding to inquiry:', error);
+        showError('حدث خطأ أثناء إرسال الرد');
       }
-      
-      const response = await fetch('/admin/update-result', {
-        method: 'POST',
-        body: formData
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'حدث خطأ في الخادم');
+    });
+
+    document.getElementById('confirmDeleteBooking').addEventListener('click', async () => {
+      const id = document.getElementById('deleteBookingId').value;
+      try {
+        const response = await fetch(`/admin/delete-booking/${id}`, { method: 'DELETE' });
+        const data = await response.json();
+        if (data.success) {
+          document.getElementById('deleteBookingModal').classList.add('hidden');
+          showSuccess('تم حذف الطلب بنجاح');
+          loadData();
+        } else {
+          showError(data.message || 'حدث خطأ أثناء حذف الطلب');
+        }
+      } catch (error) {
+        console.error('Error deleting booking:', error);
+        showError('حدث خطأ أثناء حذف الطلب');
       }
-      
-      const data = await response.json();
-      
-      if (data.success) {
-        document.getElementById('editResultModal').classList.add('hidden');
-        showSuccess(data.message || 'تم تحديث النتيجة بنجاح');
-        loadData();
-      } else {
-        throw new Error(data.message || 'فشل تحديث النتيجة');
+    });
+
+    document.getElementById('confirmDeleteInquiry').addEventListener('click', async () => {
+      const id = document.getElementById('deleteInquiryId').value;
+      try {
+        const response = await fetch(`/admin/delete-inquiry/${id}`, { method: 'DELETE' });
+        const data = await response.json();
+        if (data.success) {
+          document.getElementById('deleteInquiryModal').classList.add('hidden');
+          showSuccess('تم حذف الاستفسار بنجاح');
+          loadData();
+        } else {
+          showError(data.message || 'حدث خطأ أثناء حذف الاستفسار');
+        }
+      } catch (error) {
+        console.error('Error deleting inquiry:', error);
+        showError('حدث خطأ أثناء حذف الاستفسار');
       }
-    } catch (error) {
-      console.error('Update failed:', error);
-      showError(error.message || 'حدث خطأ أثناء تحديث النتيجة');
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = 'حفظ التعديلات';
-    }
-  });
-  
-  document.getElementById('respondInquiryForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const id = document.getElementById('respondInquiryId').value;
-    const response = document.getElementById('inquiryResponse').value;
-    
-    try {
-      const res = await fetch(`/admin/update-inquiry/${id}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ status: 'responded', response })
-      });
-      
-      const data = await res.json();
-      
-      if (data.success) {
-        document.getElementById('respondInquiryModal').classList.add('hidden');
-        document.getElementById('inquiryResponse').value = '';
-        showSuccess('تم إرسال الرد بنجاح');
-        loadData();
-      } else {
-        showError(data.message || 'حدث خطأ أثناء إرسال الرد');
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', async (e) => {
+      e.preventDefault();
+      try {
+        const response = await fetch('/admin/logout');
+        const data = await response.json();
+        if (data.success) window.location.href = '/admin-login.html';
+      } catch (error) {
+        console.error('Logout error:', error);
+        showError('حدث خطأ أثناء تسجيل الخروج');
       }
-    } catch (error) {
-      console.error('Error responding to inquiry:', error);
-      showError('حدث خطأ أثناء إرسال الرد');
-    }
-  });
-  
-  document.getElementById('confirmDeleteBooking').addEventListener('click', async () => {
-    const id = document.getElementById('deleteBookingId').value;
-    
-    try {
-      const response = await fetch(`/admin/delete-booking/${id}`, {
-        method: 'DELETE'
-      });
-      const data = await response.json();
-      
-      if (data.success) {
-        document.getElementById('deleteBookingModal').classList.add('hidden');
-        showSuccess('تم حذف الطلب بنجاح');
-        loadData();
-      } else {
-        showError(data.message || 'حدث خطأ أثناء حذف الطلب');
-      }
-    } catch (error) {
-      console.error('Error deleting booking:', error);
-      showError('حدث خطأ أثناء حذف الطلب');
-    }
-  });
-  
-  document.getElementById('confirmDeleteInquiry').addEventListener('click', async () => {
-    const id = document.getElementById('deleteInquiryId').value;
-    
-    try {
-      const response = await fetch(`/admin/delete-inquiry/${id}`, {
-        method: 'DELETE'
-      });
-      const data = await response.json();
-      
-      if (data.success) {
-        document.getElementById('deleteInquiryModal').classList.add('hidden');
-        showSuccess('تم حذف الاستفسار بنجاح');
-        loadData();
-      } else {
-        showError(data.message || 'حدث خطأ أثناء حذف الاستفسار');
-      }
-    } catch (error) {
-      console.error('Error deleting inquiry:', error);
-      showError('حدث خطأ أثناء حذف الاستفسار');
-    }
-  });
-  
-  document.getElementById('closeBookingModal').addEventListener('click', () => {
-    document.getElementById('editBookingModal').classList.add('hidden');
-  });
-  
-  document.getElementById('cancelBookingEdit').addEventListener('click', () => {
-    document.getElementById('editBookingModal').classList.add('hidden');
-  });
-  
-  document.getElementById('cancelDeleteBooking').addEventListener('click', () => {
-    document.getElementById('deleteBookingModal').classList.add('hidden');
-  });
-  
-  document.getElementById('closeInquiryModal').addEventListener('click', () => {
-    document.getElementById('respondInquiryModal').classList.add('hidden');
-  });
-  
-  document.getElementById('cancelInquiryResponse').addEventListener('click', () => {
-    document.getElementById('respondInquiryModal').classList.add('hidden');
-  });
-  
-  document.getElementById('cancelDeleteInquiry').addEventListener('click', () => {
-    document.getElementById('deleteInquiryModal').classList.add('hidden');
-  });
-  
-  document.getElementById('closeResultModal').addEventListener('click', () => {
-    document.getElementById('editResultModal').classList.add('hidden');
-  });
-  
-  document.getElementById('cancelResultEdit').addEventListener('click', () => {
-    document.getElementById('editResultModal').classList.add('hidden');
-  });
-  
-  document.getElementById('logoutBtn').addEventListener('click', async (e) => {
-    e.preventDefault();
-    
-    try {
-      const response = await fetch('/admin/logout');
-      const data = await response.json();
-      
-      if (data.success) {
-        window.location.href = '/admin-login.html';
-      }
-    } catch (error) {
-      console.error('Logout error:', error);
-      showError('حدث خطأ أثناء تسجيل الخروج');
-    }
-  });
-  
-  checkSession();
-</script>
+    });
+
+    // Start
+    checkSession();
+  </script>
 </body>
 </html>
