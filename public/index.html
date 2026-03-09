@@ -662,60 +662,76 @@
               <input type="email" id="cEmail" class="w-full px-4 py-3 rounded-xl" required>
             </div>
             <div>
-  <script>
-    // (جميع الوظائف كما هي تماماً بدون تغيير، مع الحفاظ على نفس IDs والمنطق)
+        <script>
+    // تبديل الوضع الداكن/الفاتح
     const themeToggle = document.getElementById('themeToggle');
     const themeIcon = document.getElementById('themeIcon');
     
-    if (localStorage.getItem('darkMode') === 'false') {
-      document.documentElement.classList.remove('dark');
-      themeIcon.classList.replace('fa-sun', 'fa-moon');
-    } else {
+    if (localStorage.getItem('darkMode') === 'true') {
       document.documentElement.classList.add('dark');
+      themeIcon.classList.replace('fa-moon', 'fa-sun');
     }
     
     themeToggle.addEventListener('click', () => {
       const isDark = document.documentElement.classList.toggle('dark');
       localStorage.setItem('darkMode', isDark);
-      themeIcon.classList.toggle('fa-sun', isDark);
-      themeIcon.classList.toggle('fa-moon', !isDark);
+      
+      if (isDark) {
+        themeIcon.classList.replace('fa-moon', 'fa-sun');
+      } else {
+        themeIcon.classList.replace('fa-sun', 'fa-moon');
+      }
     });
     
     // القائمة المتنقلة
     const mobileMenuButton = document.getElementById('mobileMenuButton');
     const mobileMenu = document.getElementById('mobileMenu');
+    
     mobileMenuButton.addEventListener('click', () => {
       mobileMenu.classList.toggle('active');
       mobileMenuButton.innerHTML = mobileMenu.classList.contains('active') ? 
-        '<i class="fas fa-times text-2xl text-gray-200"></i>' : 
-        '<i class="fas fa-bars text-2xl text-gray-200"></i>';
+        '<i class="fas fa-times text-gray-600 dark:text-gray-300"></i>' : 
+        '<i class="fas fa-bars text-gray-600 dark:text-gray-300"></i>';
     });
     
+    // إغلاق القائمة عند النقر على رابط
     document.querySelectorAll('#mobileMenu a').forEach(link => {
       link.addEventListener('click', () => {
         mobileMenu.classList.remove('active');
-        mobileMenuButton.innerHTML = '<i class="fas fa-bars text-2xl text-gray-200"></i>';
+        mobileMenuButton.innerHTML = '<i class="fas fa-bars text-gray-600 dark:text-gray-300"></i>';
       });
     });
     
-    // اسم الملف
+    // عرض اسم الملف المرفوع
     const fileInput = document.getElementById('bGameVideo');
     const fileName = document.getElementById('fileName');
+    
     fileInput.addEventListener('change', () => {
-      fileName.textContent = fileInput.files[0]?.name || '';
+      if (fileInput.files.length > 0) {
+        fileName.textContent = fileInput.files[0].name;
+      } else {
+        fileName.textContent = '';
+      }
     });
     
     // زر العودة للأعلى
     const backToTop = document.getElementById('backToTop');
+    
     window.addEventListener('scroll', () => {
-      backToTop.classList.toggle('hidden', window.pageYOffset <= 300);
+      if (window.pageYOffset > 300) {
+        backToTop.classList.remove('hidden');
+      } else {
+        backToTop.classList.add('hidden');
+      }
     });
     
-    // نموذج الحجز
+    // معالجة نموذج الحجز
     const bookingForm = document.getElementById('bookingForm');
     const bookingResponse = document.getElementById('bookingResponse');
+    
     bookingForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+      
       const formData = new FormData();
       formData.append('bName', document.getElementById('bName').value);
       formData.append('bEmail', document.getElementById('bEmail').value);
@@ -723,36 +739,58 @@
       formData.append('bScrim', document.getElementById('bScrim').value);
       formData.append('bDuration', document.getElementById('bDuration').value);
       formData.append('bAge', document.getElementById('bAge').value);
-      if (fileInput.files[0]) formData.append('bGameVideo', fileInput.files[0]);
+      
+      if (fileInput.files[0]) {
+        formData.append('bGameVideo', fileInput.files[0]);
+      }
       
       try {
-        const res = await fetch('/api/booking', { method: 'POST', body: formData });
+        const res = await fetch('/api/booking', {
+          method: 'POST',
+          body: formData
+        });
+        
         const data = await res.json();
+        
         bookingResponse.classList.remove('hidden');
-        bookingResponse.innerHTML = `<div class="p-4 rounded-xl ${res.ok ? 'bg-green-900/50 text-green-300' : 'bg-red-900/50 text-red-300'}">${data.message || (res.ok ? 'تم تقديم طلبك بنجاح!' : 'حدث خطأ')}</div>`;
-        if (res.ok) { bookingForm.reset(); fileName.textContent = ''; }
-      } catch { 
+        bookingResponse.innerHTML = `
+          <div class="p-4 rounded-lg ${res.ok ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-200' : 'bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200'}">
+            ${data.message || (res.ok ? 'تم تقديم طلبك بنجاح!' : 'حدث خطأ أثناء تقديم الطلب')}
+          </div>
+        `;
+        
+        if (res.ok) {
+          bookingForm.reset();
+          fileName.textContent = '';
+        }
+      } catch (error) {
         bookingResponse.classList.remove('hidden');
-        bookingResponse.innerHTML = '<div class="p-4 rounded-xl bg-red-900/50 text-red-300">تعذر الاتصال بالخادم.</div>';
+        bookingResponse.innerHTML = `
+          <div class="p-4 rounded-lg bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200">
+            تعذر الاتصال بالخادم. حاول مرة أخرى.
+          </div>
+        `;
       }
     });
     
-    // نموذج الاستعلام (محاكاة)
+    // معالجة نموذج الاستعلام عن النتيجة
     const inquiryForm = document.getElementById('inquiryForm');
     const inquiryResponse = document.getElementById('inquiryResponse');
     const resultOptions = document.getElementById('resultOptions');
     const resultViewer = document.getElementById('resultViewer');
-    const loadingSpinner = document.getElementById('loadingSpinner');
     const resultFrame = document.getElementById('resultFrame');
     const resultImage = document.getElementById('resultImage');
+    const loadingSpinner = document.getElementById('loadingSpinner');
     const downloadResult = document.getElementById('downloadResult');
     const viewResult = document.getElementById('viewResult');
     const closeResult = document.getElementById('closeResult');
+    
     let currentResult = null;
     
     inquiryForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const phone = document.getElementById('iPhone').value.trim();
+      
       inquiryResponse.classList.remove('hidden');
       resultOptions.classList.add('hidden');
       resultViewer.classList.remove('hidden');
@@ -760,37 +798,48 @@
       resultFrame.classList.add('hidden');
       resultImage.classList.add('hidden');
       
-      // محاكاة استجابة (بدل fetch حقيقي)
-      setTimeout(() => {
-        if (phone.length > 5) {
-          currentResult = { fileUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' };
+      try {
+        const response = await fetch(`/api/results/${encodeURIComponent(phone)}`);
+        const data = await response.json();
+        
+        if (data.success && data.results && data.results.length > 0) {
+          currentResult = data.results[0];
           loadingSpinner.classList.add('hidden');
           resultOptions.classList.remove('hidden');
         } else {
-          resultViewer.innerHTML = '<div class="text-center p-4 text-red-400">لا توجد نتائج لهذا الرقم</div>';
-          loadingSpinner.classList.add('hidden');
+          showError(data.message || 'لا توجد نتائج لهذا الرقم');
         }
-      }, 1500);
-    });
-    
-    downloadResult.addEventListener('click', () => {
-      if (currentResult?.fileUrl) {
-        const a = document.createElement('a');
-        a.href = currentResult.fileUrl;
-        a.download = 'result.pdf';
-        a.click();
+      } catch (error) {
+        console.error('Error fetching results:', error);
+        showError('تعذر الاتصال بالخادم. حاول مرة أخرى.');
       }
     });
     
+    // تحميل النتيجة
+    downloadResult.addEventListener('click', () => {
+      if (currentResult && currentResult.fileUrl) {
+        const a = document.createElement('a');
+        a.href = currentResult.fileUrl;
+        a.download = 'نتيجة-clan TRIPxESPORTS.pdf';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+    });
+    
+    // عرض النتيجة
     viewResult.addEventListener('click', () => {
       if (!currentResult) return;
+      
       resultOptions.classList.add('hidden');
       resultViewer.classList.remove('hidden');
       loadingSpinner.classList.remove('hidden');
       resultFrame.classList.add('hidden');
       resultImage.classList.add('hidden');
+      
       setTimeout(() => {
         loadingSpinner.classList.add('hidden');
+        
         if (currentResult.fileUrl.endsWith('.pdf')) {
           resultFrame.src = currentResult.fileUrl;
           resultFrame.classList.remove('hidden');
@@ -801,30 +850,71 @@
       }, 1000);
     });
     
-    closeResult.addEventListener('click', () => inquiryResponse.classList.add('hidden'));
+    function showError(message) {
+      resultViewer.innerHTML = `
+        <div class="text-center p-4 text-red-500 dark:text-red-400">
+          ${message}
+        </div>
+      `;
+      loadingSpinner.classList.add('hidden');
+    }
     
-    // نموذج الاتصال
+    // إغلاق عرض النتيجة
+    closeResult.addEventListener('click', () => {
+      inquiryResponse.classList.add('hidden');
+    });
+    
+    // معالجة نموذج الاتصال
     document.getElementById('contactForm').addEventListener('submit', async function(e) {
       e.preventDefault();
+      
       const name = document.getElementById('cName').value.trim();
       const email = document.getElementById('cEmail').value.trim();
       const phone = document.getElementById('cPhone').value.trim();
       const message = document.getElementById('cMessage').value.trim();
+      
       if (!name || !email || !phone || !message) {
-        document.getElementById('contactResponse').innerHTML = '<div class="p-4 rounded-xl bg-red-900/50 text-red-300">املأ جميع الحقول</div>';
+        document.getElementById('contactResponse').innerHTML = `
+          <div class="p-4 rounded-lg bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200">
+            من فضلك املأ جميع الحقول المطلوبة
+          </div>
+        `;
         return;
       }
+      
       try {
         const response = await fetch('/api/contact', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, email, phone, message })
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: name,
+            email: email,
+            phone: phone,
+            message: message
+          })
         });
+        
         const data = await response.json();
-        document.getElementById('contactResponse').innerHTML = `<div class="p-4 rounded-xl ${data.success ? 'bg-green-900/50 text-green-300' : 'bg-red-900/50 text-red-300'}">${data.message}</div>`;
-        if (data.success) e.target.reset();
-      } catch {
-        document.getElementById('contactResponse').innerHTML = '<div class="p-4 rounded-xl bg-red-900/50 text-red-300">حدث خطأ</div>';
+        
+        const responseDiv = document.getElementById('contactResponse');
+        responseDiv.innerHTML = `
+          <div class="p-4 rounded-lg ${data.success ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-200' : 'bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200'}">
+            ${data.message}
+          </div>
+        `;
+        
+        if (data.success) {
+          document.getElementById('contactForm').reset();
+        }
+      } catch (error) {
+        console.error('Error submitting contact form:', error);
+        document.getElementById('contactResponse').innerHTML = `
+          <div class="p-4 rounded-lg bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200">
+            حدث خطأ أثناء الإرسال. حاول مرة أخرى.
+          </div>
+        `;
       }
     });
   </script>
