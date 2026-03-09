@@ -663,260 +663,284 @@
             </div>
             <div>
         <script>
-    // تبديل الوضع الداكن/الفاتح
-    const themeToggle = document.getElementById('themeToggle');
-    const themeIcon = document.getElementById('themeIcon');
-    
-    if (localStorage.getItem('darkMode') === 'true') {
-      document.documentElement.classList.add('dark');
+  // الوضع الداكن / الفاتح
+  const themeToggle = document.getElementById('themeToggle');
+  const themeIcon = document.getElementById('themeIcon');
+
+  if (localStorage.getItem('darkMode') === 'false') {
+    document.documentElement.classList.remove('dark');
+    themeIcon.classList.replace('fa-sun', 'fa-moon');
+  } else {
+    document.documentElement.classList.add('dark');
+    themeIcon.classList.replace('fa-moon', 'fa-sun');
+  }
+
+  themeToggle.addEventListener('click', () => {
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('darkMode', isDark);
+
+    if (isDark) {
       themeIcon.classList.replace('fa-moon', 'fa-sun');
+    } else {
+      themeIcon.classList.replace('fa-sun', 'fa-moon');
     }
-    
-    themeToggle.addEventListener('click', () => {
-      const isDark = document.documentElement.classList.toggle('dark');
-      localStorage.setItem('darkMode', isDark);
-      
-      if (isDark) {
-        themeIcon.classList.replace('fa-moon', 'fa-sun');
-      } else {
-        themeIcon.classList.replace('fa-sun', 'fa-moon');
-      }
+  });
+
+  // القائمة المتنقلة
+  const mobileMenuButton = document.getElementById('mobileMenuButton');
+  const mobileMenu = document.getElementById('mobileMenu');
+
+  mobileMenuButton.addEventListener('click', () => {
+    mobileMenu.classList.toggle('active');
+    mobileMenuButton.innerHTML = mobileMenu.classList.contains('active')
+      ? '<i class="fas fa-times text-2xl text-gray-200"></i>'
+      : '<i class="fas fa-bars text-2xl text-gray-200"></i>';
+  });
+
+  document.querySelectorAll('#mobileMenu a').forEach(link => {
+    link.addEventListener('click', () => {
+      mobileMenu.classList.remove('active');
+      mobileMenuButton.innerHTML = '<i class="fas fa-bars text-2xl text-gray-200"></i>';
     });
-    
-    // القائمة المتنقلة
-    const mobileMenuButton = document.getElementById('mobileMenuButton');
-    const mobileMenu = document.getElementById('mobileMenu');
-    
-    mobileMenuButton.addEventListener('click', () => {
-      mobileMenu.classList.toggle('active');
-      mobileMenuButton.innerHTML = mobileMenu.classList.contains('active') ? 
-        '<i class="fas fa-times text-gray-600 dark:text-gray-300"></i>' : 
-        '<i class="fas fa-bars text-gray-600 dark:text-gray-300"></i>';
-    });
-    
-    // إغلاق القائمة عند النقر على رابط
-    document.querySelectorAll('#mobileMenu a').forEach(link => {
-      link.addEventListener('click', () => {
-        mobileMenu.classList.remove('active');
-        mobileMenuButton.innerHTML = '<i class="fas fa-bars text-gray-600 dark:text-gray-300"></i>';
+  });
+
+  // عرض اسم الملف المرفوع
+  const fileInput = document.getElementById('bGameVideo');
+  const fileName = document.getElementById('fileName');
+
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files.length > 0) {
+      fileName.textContent = fileInput.files[0].name;
+    } else {
+      fileName.textContent = '';
+    }
+  });
+
+  // زر العودة للأعلى
+  const backToTop = document.getElementById('backToTop');
+
+  window.addEventListener('scroll', () => {
+    if (window.pageYOffset > 300) {
+      backToTop.classList.remove('hidden');
+    } else {
+      backToTop.classList.add('hidden');
+    }
+  });
+
+  // معالجة نموذج الحجز
+  const bookingForm = document.getElementById('bookingForm');
+  const bookingResponse = document.getElementById('bookingResponse');
+
+  bookingForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append('bName', document.getElementById('bName').value);
+    formData.append('bEmail', document.getElementById('bEmail').value);
+    formData.append('bPhone', document.getElementById('bPhone').value);
+    formData.append('bScrim', document.getElementById('bScrim').value);
+    formData.append('bDuration', document.getElementById('bDuration').value);
+    formData.append('bAge', document.getElementById('bAge').value);
+
+    if (fileInput.files[0]) {
+      formData.append('bGameVideo', fileInput.files[0]);
+    }
+
+    try {
+      const res = await fetch('/api/booking', {
+        method: 'POST',
+        body: formData
       });
-    });
-    
-    // عرض اسم الملف المرفوع
-    const fileInput = document.getElementById('bGameVideo');
-    const fileName = document.getElementById('fileName');
-    
-    fileInput.addEventListener('change', () => {
-      if (fileInput.files.length > 0) {
-        fileName.textContent = fileInput.files[0].name;
-      } else {
-        fileName.textContent = '';
-      }
-    });
-    
-    // زر العودة للأعلى
-    const backToTop = document.getElementById('backToTop');
-    
-    window.addEventListener('scroll', () => {
-      if (window.pageYOffset > 300) {
-        backToTop.classList.remove('hidden');
-      } else {
-        backToTop.classList.add('hidden');
-      }
-    });
-    
-    // معالجة نموذج الحجز
-    const bookingForm = document.getElementById('bookingForm');
-    const bookingResponse = document.getElementById('bookingResponse');
-    
-    bookingForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      
-      const formData = new FormData();
-      formData.append('bName', document.getElementById('bName').value);
-      formData.append('bEmail', document.getElementById('bEmail').value);
-      formData.append('bPhone', document.getElementById('bPhone').value);
-      formData.append('bScrim', document.getElementById('bScrim').value);
-      formData.append('bDuration', document.getElementById('bDuration').value);
-      formData.append('bAge', document.getElementById('bAge').value);
-      
-      if (fileInput.files[0]) {
-        formData.append('bGameVideo', fileInput.files[0]);
-      }
-      
-      try {
-        const res = await fetch('/api/booking', {
-          method: 'POST',
-          body: formData
-        });
-        
-        const data = await res.json();
-        
-        bookingResponse.classList.remove('hidden');
-        bookingResponse.innerHTML = `
-          <div class="p-4 rounded-lg ${res.ok ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-200' : 'bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200'}">
-            ${data.message || (res.ok ? 'تم تقديم طلبك بنجاح!' : 'حدث خطأ أثناء تقديم الطلب')}
-          </div>
-        `;
-        
-        if (res.ok) {
-          bookingForm.reset();
-          fileName.textContent = '';
-        }
-      } catch (error) {
-        bookingResponse.classList.remove('hidden');
-        bookingResponse.innerHTML = `
-          <div class="p-4 rounded-lg bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200">
-            تعذر الاتصال بالخادم. حاول مرة أخرى.
-          </div>
-        `;
-      }
-    });
-    
-    // معالجة نموذج الاستعلام عن النتيجة
-    const inquiryForm = document.getElementById('inquiryForm');
-    const inquiryResponse = document.getElementById('inquiryResponse');
-    const resultOptions = document.getElementById('resultOptions');
-    const resultViewer = document.getElementById('resultViewer');
-    const resultFrame = document.getElementById('resultFrame');
-    const resultImage = document.getElementById('resultImage');
-    const loadingSpinner = document.getElementById('loadingSpinner');
-    const downloadResult = document.getElementById('downloadResult');
-    const viewResult = document.getElementById('viewResult');
-    const closeResult = document.getElementById('closeResult');
-    
-    let currentResult = null;
-    
-    inquiryForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const phone = document.getElementById('iPhone').value.trim();
-      
-      inquiryResponse.classList.remove('hidden');
-      resultOptions.classList.add('hidden');
-      resultViewer.classList.remove('hidden');
-      loadingSpinner.classList.remove('hidden');
-      resultFrame.classList.add('hidden');
-      resultImage.classList.add('hidden');
-      
-      try {
-        const response = await fetch(`/api/results/${encodeURIComponent(phone)}`);
-        const data = await response.json();
-        
-        if (data.success && data.results && data.results.length > 0) {
-          currentResult = data.results[0];
-          loadingSpinner.classList.add('hidden');
-          resultOptions.classList.remove('hidden');
-        } else {
-          showError(data.message || 'لا توجد نتائج لهذا الرقم');
-        }
-      } catch (error) {
-        console.error('Error fetching results:', error);
-        showError('تعذر الاتصال بالخادم. حاول مرة أخرى.');
-      }
-    });
-    
-    // تحميل النتيجة
-    downloadResult.addEventListener('click', () => {
-      if (currentResult && currentResult.fileUrl) {
-        const a = document.createElement('a');
-        a.href = currentResult.fileUrl;
-        a.download = 'نتيجة-clan TRIPxESPORTS.pdf';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      }
-    });
-    
-    // عرض النتيجة
-    viewResult.addEventListener('click', () => {
-      if (!currentResult) return;
-      
-      resultOptions.classList.add('hidden');
-      resultViewer.classList.remove('hidden');
-      loadingSpinner.classList.remove('hidden');
-      resultFrame.classList.add('hidden');
-      resultImage.classList.add('hidden');
-      
-      setTimeout(() => {
-        loadingSpinner.classList.add('hidden');
-        
-        if (currentResult.fileUrl.endsWith('.pdf')) {
-          resultFrame.src = currentResult.fileUrl;
-          resultFrame.classList.remove('hidden');
-        } else {
-          resultImage.src = currentResult.fileUrl;
-          resultImage.classList.remove('hidden');
-        }
-      }, 1000);
-    });
-    
-    function showError(message) {
-      resultViewer.innerHTML = `
-        <div class="text-center p-4 text-red-500 dark:text-red-400">
-          ${message}
+
+      const data = await res.json();
+
+      bookingResponse.classList.remove('hidden');
+      bookingResponse.innerHTML = `
+        <div class="p-4 rounded-xl ${res.ok ? 'bg-green-900/50 text-green-300 border border-green-500/30' : 'bg-red-900/50 text-red-300 border border-red-500/30'}">
+          ${data.message || (res.ok ? 'تم تقديم طلبك بنجاح!' : 'حدث خطأ أثناء تقديم الطلب')}
         </div>
       `;
-      loadingSpinner.classList.add('hidden');
+
+      if (res.ok) {
+        bookingForm.reset();
+        fileName.textContent = '';
+      }
+    } catch (error) {
+      bookingResponse.classList.remove('hidden');
+      bookingResponse.innerHTML = `
+        <div class="p-4 rounded-xl bg-red-900/50 text-red-300 border border-red-500/30">
+          تعذر الاتصال بالخادم. حاول مرة أخرى.
+        </div>
+      `;
     }
-    
-    // إغلاق عرض النتيجة
-    closeResult.addEventListener('click', () => {
-      inquiryResponse.classList.add('hidden');
-    });
-    
-    // معالجة نموذج الاتصال
-    document.getElementById('contactForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      
-      const name = document.getElementById('cName').value.trim();
-      const email = document.getElementById('cEmail').value.trim();
-      const phone = document.getElementById('cPhone').value.trim();
-      const message = document.getElementById('cMessage').value.trim();
-      
-      if (!name || !email || !phone || !message) {
-        document.getElementById('contactResponse').innerHTML = `
-          <div class="p-4 rounded-lg bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200">
-            من فضلك املأ جميع الحقول المطلوبة
-          </div>
-        `;
-        return;
+  });
+
+  // معالجة نموذج الاستعلام عن النتيجة
+  const inquiryForm = document.getElementById('inquiryForm');
+  const inquiryResponse = document.getElementById('inquiryResponse');
+  const resultOptions = document.getElementById('resultOptions');
+  const resultViewer = document.getElementById('resultViewer');
+  const resultFrame = document.getElementById('resultFrame');
+  const resultImage = document.getElementById('resultImage');
+  const loadingSpinner = document.getElementById('loadingSpinner');
+  const downloadResult = document.getElementById('downloadResult');
+  const viewResult = document.getElementById('viewResult');
+  const closeResult = document.getElementById('closeResult');
+
+  let currentResult = null;
+
+  inquiryForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const phone = document.getElementById('iPhone').value.trim();
+
+    inquiryResponse.classList.remove('hidden');
+    resultOptions.classList.add('hidden');
+    resultViewer.classList.remove('hidden');
+    loadingSpinner.classList.remove('hidden');
+    resultFrame.classList.add('hidden');
+    resultImage.classList.add('hidden');
+    resultFrame.src = '';
+    resultImage.src = '';
+
+    try {
+      const response = await fetch(`/api/results/${encodeURIComponent(phone)}`);
+      const data = await response.json();
+
+      if (data.success && data.results && data.results.length > 0) {
+        currentResult = data.results[0];
+        loadingSpinner.classList.add('hidden');
+        resultOptions.classList.remove('hidden');
+      } else {
+        showError(data.message || 'لا توجد نتائج لهذا الرقم');
       }
-      
-      try {
-        const response = await fetch('/api/contact', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            name: name,
-            email: email,
-            phone: phone,
-            message: message
-          })
-        });
-        
-        const data = await response.json();
-        
-        const responseDiv = document.getElementById('contactResponse');
-        responseDiv.innerHTML = `
-          <div class="p-4 rounded-lg ${data.success ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-200' : 'bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200'}">
-            ${data.message}
-          </div>
-        `;
-        
-        if (data.success) {
-          document.getElementById('contactForm').reset();
-        }
-      } catch (error) {
-        console.error('Error submitting contact form:', error);
-        document.getElementById('contactResponse').innerHTML = `
-          <div class="p-4 rounded-lg bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200">
-            حدث خطأ أثناء الإرسال. حاول مرة أخرى.
-          </div>
-        `;
+    } catch (error) {
+      console.error('Error fetching results:', error);
+      showError('تعذر الاتصال بالخادم. حاول مرة أخرى.');
+    }
+  });
+
+  // تحميل النتيجة
+  downloadResult.addEventListener('click', () => {
+    if (currentResult && currentResult.fileUrl) {
+      const a = document.createElement('a');
+      a.href = currentResult.fileUrl;
+      a.download = 'نتيجة-clan-TRIPxESPORTS.pdf';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+  });
+
+  // عرض النتيجة
+  viewResult.addEventListener('click', () => {
+    if (!currentResult || !currentResult.fileUrl) return;
+
+    resultOptions.classList.add('hidden');
+    resultViewer.classList.remove('hidden');
+    loadingSpinner.classList.remove('hidden');
+    resultFrame.classList.add('hidden');
+    resultImage.classList.add('hidden');
+
+    setTimeout(() => {
+      loadingSpinner.classList.add('hidden');
+
+      if (currentResult.fileUrl.toLowerCase().endsWith('.pdf')) {
+        resultFrame.src = currentResult.fileUrl;
+        resultFrame.classList.remove('hidden');
+      } else {
+        resultImage.src = currentResult.fileUrl;
+        resultImage.classList.remove('hidden');
       }
-    });
-  </script>
+    }, 1000);
+  });
+
+  function showError(message) {
+    resultOptions.classList.add('hidden');
+    resultFrame.classList.add('hidden');
+    resultImage.classList.add('hidden');
+    loadingSpinner.classList.add('hidden');
+
+    resultViewer.classList.remove('hidden');
+    resultViewer.innerHTML = `
+      <div class="text-center p-4 rounded-xl bg-red-900/30 text-red-400 border border-red-500/20">
+        ${message}
+      </div>
+    `;
+  }
+
+  // إغلاق عرض النتيجة
+  closeResult.addEventListener('click', () => {
+    inquiryResponse.classList.add('hidden');
+
+    // إعادة واجهة العرض لحالتها الأصلية
+    resultViewer.innerHTML = `
+      <div id="loadingSpinner" class="flex justify-center py-8 hidden">
+        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-light"></div>
+      </div>
+      <iframe id="resultFrame" src="" class="w-full h-96 rounded-xl hidden"></iframe>
+      <img id="resultImage" src="" alt="النتيجة" class="w-full h-auto rounded-xl hidden">
+    `;
+
+    // إعادة ربط العناصر بعد innerHTML
+    window.location.reload();
+  });
+
+  // معالجة نموذج الاتصال
+  const contactForm = document.getElementById('contactForm');
+  const contactResponse = document.getElementById('contactResponse');
+
+  contactForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const name = document.getElementById('cName').value.trim();
+    const email = document.getElementById('cEmail').value.trim();
+    const phone = document.getElementById('cPhone').value.trim();
+    const message = document.getElementById('cMessage').value.trim();
+
+    if (!name || !email || !phone || !message) {
+      contactResponse.innerHTML = `
+        <div class="p-4 rounded-xl bg-red-900/50 text-red-300 border border-red-500/30">
+          من فضلك املأ جميع الحقول المطلوبة
+        </div>
+      `;
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: name,
+          email: email,
+          phone: phone,
+          message: message
+        })
+      });
+
+      const data = await response.json();
+
+      contactResponse.innerHTML = `
+        <div class="p-4 rounded-xl ${data.success ? 'bg-green-900/50 text-green-300 border border-green-500/30' : 'bg-red-900/50 text-red-300 border border-red-500/30'}">
+          ${data.message}
+        </div>
+      `;
+
+      if (data.success) {
+        contactForm.reset();
+      }
+    } catch (error) {
+      console.error('Error submitting contact form:', error);
+      contactResponse.innerHTML = `
+        <div class="p-4 rounded-xl bg-red-900/50 text-red-300 border border-red-500/30">
+          حدث خطأ أثناء الإرسال. حاول مرة أخرى.
+        </div>
+      `;
+    }
+  });
+</script>
 </body>
 </html>
