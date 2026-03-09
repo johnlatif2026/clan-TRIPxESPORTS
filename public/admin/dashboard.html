@@ -3,77 +3,150 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>لوحة التحكم - Clan TRIPxESPORTS</title>
+  <title>TRIPxESPORTS | لوحة القيادة</title>
 
+  <!-- Tailwind + Fonts -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
-  <!-- خط عربي لطيف -->
+  
+  <!-- Fonts: Poppins (للإنجليزية) + Cairo (للعربية) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    html { font-family: "Cairo", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
-    /* Scrollbar بسيط (اختياري) */
-    .nice-scroll::-webkit-scrollbar { width: 10px; height: 10px; }
-    .nice-scroll::-webkit-scrollbar-thumb { background: rgba(100,116,139,.35); border-radius: 9999px; }
-    .nice-scroll::-webkit-scrollbar-track { background: transparent; }
+    * {
+      font-family: 'Cairo', 'Poppins', sans-serif;
+    }
+
+    /* خلفية متحركة بتدرج نيون */
+    body {
+      background: radial-gradient(circle at 30% 30%, rgba(45, 0, 75, 0.8), #0a0010);
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* تأثير الزجاج */
+    .glass {
+      background: rgba(20, 20, 30, 0.6);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    .glass-card {
+      background: rgba(25, 25, 35, 0.7);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.6);
+    }
+
+    /* توهج نيون */
+    .neon-glow {
+      box-shadow: 0 0 15px rgba(156, 39, 176, 0.4), 0 0 30px rgba(41, 98, 255, 0.2);
+    }
+
+    .neon-border {
+      border: 1px solid rgba(156, 39, 176, 0.4);
+      box-shadow: 0 0 15px rgba(156, 39, 176, 0.3);
+    }
+
+    /* Scrollbar مخصص */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.2);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #9c27b0, #3f51b5);
+      border-radius: 20px;
+    }
+
+    /* تأثيرات hover للأزرار */
+    .btn-glow {
+      transition: all 0.2s ease;
+    }
+    .btn-glow:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 20px rgba(156, 39, 176, 0.6);
+    }
+
+    /* شريط جانبي متوهج */
+    .sidebar-glow {
+      border-left: 1px solid rgba(156, 39, 176, 0.3);
+      box-shadow: -5px 0 30px rgba(0, 0, 0, 0.5);
+    }
+
+    /* حركة خلفية بطيئة */
+    @keyframes gradientShift {
+      0% { background-position: 0% 0%; }
+      50% { background-position: 100% 100%; }
+      100% { background-position: 0% 0%; }
+    }
+
+    .animated-bg {
+      background: radial-gradient(circle at 70% 30%, rgba(80, 0, 120, 0.5), transparent 50%),
+                  radial-gradient(circle at 30% 70%, rgba(30, 60, 200, 0.4), transparent 50%);
+      background-size: 200% 200%;
+      animation: gradientShift 15s ease infinite;
+    }
+
+    /* تحسين مظهر الجداول */
+    .table-neon tbody tr:hover {
+      background: rgba(156, 39, 176, 0.15);
+      transition: background 0.2s;
+    }
   </style>
 </head>
+<body class="text-gray-200 animated-bg">
 
-<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100">
-  <!-- Toasts -->
+  <!-- Toast بنفس التصميم -->
   <div id="toastHost" class="fixed top-4 right-4 z-[60] space-y-2"></div>
 
   <!-- Mobile backdrop -->
-  <div id="backdrop" class="fixed inset-0 bg-black/40 hidden z-40"></div>
+  <div id="backdrop" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden z-40"></div>
 
   <div class="min-h-screen">
     <div class="lg:flex">
-      <!-- Sidebar -->
-      <aside
-        id="sidebar"
+
+      <!-- ========== SIDEBAR ========== -->
+      <aside id="sidebar"
         class="fixed lg:sticky top-0 right-0 z-50 lg:z-10 h-screen w-[290px] lg:w-[300px]
-               -translate-x-0 translate-y-0
-               bg-white/85 dark:bg-slate-900/70
-               backdrop-blur-xl
-               border-l border-slate-200/70 dark:border-slate-800/70
-               shadow-lg lg:shadow-none
-               transform lg:transform-none
+               translate-x-full lg:translate-x-0
+               glass sidebar-glow
                transition-transform duration-300 ease-out
-               -translate-x-0
-               translate-x-full lg:translate-x-0"
-      >
+               border-l border-white/5">
+        
         <!-- Brand -->
-        <div class="h-16 px-4 flex items-center justify-between border-b border-slate-200/70 dark:border-slate-800/70">
+        <div class="h-16 px-4 flex items-center justify-between border-b border-white/10">
           <a href="dashboard.html" class="flex items-center gap-3">
-            <div class="h-10 w-10 rounded-2xl grid place-items-center bg-gradient-to-tr from-indigo-600 to-sky-500 text-white shadow">
-              <i class="fas fa-crown"></i>
+            <div class="h-10 w-10 rounded-2xl grid place-items-center bg-gradient-to-br from-purple-600 to-blue-600 text-white shadow-lg shadow-purple-500/30">
+              <i class="fas fa-crown text-lg"></i>
             </div>
             <div class="leading-tight">
-              <div class="font-bold">Clan TRIPxESPORTS</div>
-              <div class="text-xs text-slate-500 dark:text-slate-400">Admin Panel</div>
+              <div class="font-extrabold text-white">TRIPxESPORTS</div>
+              <div class="text-xs text-purple-300">Admin Panel</div>
             </div>
           </a>
-          <button id="closeSidebarMobile" class="lg:hidden h-10 w-10 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">
+          <button id="closeSidebarMobile" class="lg:hidden h-10 w-10 rounded-xl hover:bg-white/10 text-white">
             <i class="fas fa-xmark"></i>
           </button>
         </div>
 
         <!-- User mini card -->
         <div class="p-4">
-          <div class="rounded-2xl p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/70">
+          <div class="rounded-2xl p-3 glass-card neon-border">
             <div class="flex items-center gap-3">
-              <img
-                src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff"
-                alt="Admin"
-                class="w-10 h-10 rounded-2xl"
-              />
+              <img src="https://ui-avatars.com/api/?name=Admin&background=9c27b0&color=fff&bold=true&length=1" alt="Admin" class="w-10 h-10 rounded-2xl border-2 border-purple-400">
               <div class="flex-1">
-                <div class="font-semibold">الادمن</div>
+                <div class="font-bold text-white">الادمن</div>
               </div>
-              <button id="toggleDarkMode" class="h-10 w-10 rounded-xl border border-slate-200/70 dark:border-slate-800/70 hover:bg-white dark:hover:bg-slate-800">
+              <button id="toggleDarkMode" class="h-10 w-10 rounded-xl glass-card hover:bg-white/10 text-purple-300">
                 <i class="fas fa-moon dark:hidden"></i>
                 <i class="fas fa-sun hidden dark:inline"></i>
               </button>
@@ -85,64 +158,40 @@
         <nav class="px-3">
           <ul class="space-y-1">
             <li>
-              <a href="#" data-tab="dashboard"
-                 class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-2xl
-                        text-slate-700 dark:text-slate-200
-                        hover:bg-slate-100 dark:hover:bg-slate-800/70
-                        transition">
-                <span class="h-9 w-9 rounded-xl grid place-items-center bg-indigo-600/10 text-indigo-600 dark:text-indigo-300 dark:bg-indigo-400/10">
+              <a href="#" data-tab="dashboard" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-2xl text-gray-300 hover:bg-white/10 hover:text-white transition-all duration-200">
+                <span class="h-9 w-9 rounded-xl grid place-items-center bg-purple-600/20 text-purple-400">
                   <i class="fas fa-tachometer-alt"></i>
                 </span>
                 <span class="font-semibold">لوحة التحكم</span>
               </a>
             </li>
-
             <li>
-              <a href="#" data-tab="bookings"
-                 class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-2xl
-                        text-slate-700 dark:text-slate-200
-                        hover:bg-slate-100 dark:hover:bg-slate-800/70
-                        transition">
-                <span class="h-9 w-9 rounded-xl grid place-items-center bg-sky-600/10 text-sky-600 dark:text-sky-300 dark:bg-sky-400/10">
+              <a href="#" data-tab="bookings" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-2xl text-gray-300 hover:bg-white/10 hover:text-white transition-all duration-200">
+                <span class="h-9 w-9 rounded-xl grid place-items-center bg-blue-600/20 text-blue-400">
                   <i class="fas fa-users"></i>
                 </span>
                 <span class="font-semibold">طلبات الانضمام</span>
               </a>
             </li>
-
             <li>
-              <a href="#" data-tab="messages"
-                 class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-2xl
-                        text-slate-700 dark:text-slate-200
-                        hover:bg-slate-100 dark:hover:bg-slate-800/70
-                        transition">
-                <span class="h-9 w-9 rounded-xl grid place-items-center bg-emerald-600/10 text-emerald-600 dark:text-emerald-300 dark:bg-emerald-400/10">
+              <a href="#" data-tab="messages" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-2xl text-gray-300 hover:bg-white/10 hover:text-white transition-all duration-200">
+                <span class="h-9 w-9 rounded-xl grid place-items-center bg-emerald-600/20 text-emerald-400">
                   <i class="fas fa-envelope"></i>
                 </span>
                 <span class="font-semibold">إرسال رسائل</span>
               </a>
             </li>
-
             <li>
-              <a href="#" data-tab="inquiries"
-                 class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-2xl
-                        text-slate-700 dark:text-slate-200
-                        hover:bg-slate-100 dark:hover:bg-slate-800/70
-                        transition">
-                <span class="h-9 w-9 rounded-xl grid place-items-center bg-amber-600/10 text-amber-700 dark:text-amber-300 dark:bg-amber-400/10">
+              <a href="#" data-tab="inquiries" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-2xl text-gray-300 hover:bg-white/10 hover:text-white transition-all duration-200">
+                <span class="h-9 w-9 rounded-xl grid place-items-center bg-amber-600/20 text-amber-400">
                   <i class="fas fa-question-circle"></i>
                 </span>
                 <span class="font-semibold">الاستفسارات</span>
               </a>
             </li>
-
             <li>
-              <a href="#" data-tab="results"
-                 class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-2xl
-                        text-slate-700 dark:text-slate-200
-                        hover:bg-slate-100 dark:hover:bg-slate-800/70
-                        transition">
-                <span class="h-9 w-9 rounded-xl grid place-items-center bg-violet-600/10 text-violet-700 dark:text-violet-300 dark:bg-violet-400/10">
+              <a href="#" data-tab="results" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-2xl text-gray-300 hover:bg-white/10 hover:text-white transition-all duration-200">
+                <span class="h-9 w-9 rounded-xl grid place-items-center bg-violet-600/20 text-violet-400">
                   <i class="fas fa-check-circle"></i>
                 </span>
                 <span class="font-semibold">النتائج المعتمدة</span>
@@ -150,12 +199,8 @@
             </li>
 
             <li class="pt-2">
-              <a href="/admin/logout" id="logoutBtn"
-                 class="flex items-center gap-3 px-3 py-2.5 rounded-2xl
-                        text-rose-600 dark:text-rose-300
-                        hover:bg-rose-50 dark:hover:bg-rose-500/10
-                        transition">
-                <span class="h-9 w-9 rounded-xl grid place-items-center bg-rose-600/10 text-rose-600 dark:text-rose-300 dark:bg-rose-400/10">
+              <a href="/admin/logout" id="logoutBtn" class="flex items-center gap-3 px-3 py-2.5 rounded-2xl text-rose-300 hover:bg-rose-500/10 transition-all duration-200">
+                <span class="h-9 w-9 rounded-xl grid place-items-center bg-rose-600/20 text-rose-400">
                   <i class="fas fa-sign-out-alt"></i>
                 </span>
                 <span class="font-semibold">تسجيل الخروج</span>
@@ -166,104 +211,102 @@
 
         <!-- Footer -->
         <div class="absolute bottom-0 right-0 left-0 p-4">
-          <div class="text-xs text-slate-500 dark:text-slate-400 text-center">
-            © <span id="yearNow"></span> TRIPxESPORTS
+          <div class="text-xs text-gray-500 text-center border-t border-white/5 pt-3">
+            © <span id="yearNow"></span> TRIPxESPORTS • كل الحقوق محفوظة
           </div>
         </div>
       </aside>
 
-      <!-- Main -->
+      <!-- ========== MAIN CONTENT ========== -->
       <div class="lg:flex-1 lg:mr-[300px]">
+
         <!-- Topbar -->
-        <header class="sticky top-0 z-30 bg-white/70 dark:bg-slate-950/60 backdrop-blur-xl border-b border-slate-200/70 dark:border-slate-800/70">
+        <header class="sticky top-0 z-30 glass border-b border-white/10">
           <div class="h-16 px-4 sm:px-6 flex items-center justify-between">
             <div class="flex items-center gap-3">
-              <button id="openSidebarMobile"
-                      class="lg:hidden h-10 w-10 rounded-xl border border-slate-200/70 dark:border-slate-800/70
-                             hover:bg-slate-100 dark:hover:bg-slate-800">
+              <button id="openSidebarMobile" class="lg:hidden h-10 w-10 rounded-xl glass hover:bg-white/10 text-purple-300">
                 <i class="fas fa-bars"></i>
               </button>
-
-              <div>
-                <h1 id="pageTitle" class="text-lg sm:text-xl font-bold">لوحة التحكم</h1>
-              </div>
+              <h1 id="pageTitle" class="text-xl sm:text-2xl font-extrabold bg-gradient-to-l from-purple-400 to-blue-400 text-transparent bg-clip-text">لوحة التحكم</h1>
             </div>
 
             <div class="flex items-center gap-3">
-              <div class="hidden sm:flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-                <i class="fa-regular fa-circle-check"></i>
-                <span>Session Guard</span>
+              <div class="hidden sm:flex items-center gap-2 text-xs text-purple-300 bg-white/5 py-1.5 px-3 rounded-full">
+                <i class="fa-regular fa-circle-check text-purple-400"></i>
+                <span>وضع اللعب • نشط</span>
               </div>
             </div>
           </div>
         </header>
 
-        <!-- Content -->
-        <main class="p-4 sm:p-6">
+        <!-- Main Content -->
+        <main class="p-4 sm:p-6 lg:p-8 space-y-6">
+
           <!-- Dashboard Tab -->
           <section id="dashboardTab" class="tab-content space-y-6">
-            <!-- KPIs -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-              <div class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/70 p-5 shadow-sm">
-                <div class="flex items-start justify-between gap-4">
+
+            <!-- KPIs بطاقات متوهجة -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+              <div class="glass-card rounded-3xl p-6 neon-glow hover:scale-[1.02] transition-transform duration-200">
+                <div class="flex items-start justify-between">
                   <div>
-                    <div class="text-sm text-slate-500 dark:text-slate-400">طلبات الانضمام</div>
-                    <div class="text-3xl font-extrabold mt-1" id="totalBookings">0</div>
-                    <a href="#" data-tab="bookings" class="inline-flex items-center gap-2 mt-3 text-sm font-semibold text-indigo-600 dark:text-indigo-300 hover:underline">
-                      عرض الكل <i class="fas fa-arrow-left"></i>
+                    <div class="text-sm text-purple-300 mb-1">طلبات الانضمام</div>
+                    <div class="text-4xl font-black text-white" id="totalBookings">0</div>
+                    <a href="#" data-tab="bookings" class="inline-flex items-center gap-2 mt-4 text-sm font-semibold text-purple-400 hover:text-purple-300 transition">
+                      عرض الكل <i class="fas fa-arrow-left text-xs"></i>
                     </a>
                   </div>
-                  <div class="h-12 w-12 rounded-2xl grid place-items-center bg-indigo-600/10 text-indigo-600 dark:text-indigo-300 dark:bg-indigo-400/10">
-                    <i class="fas fa-users text-lg"></i>
+                  <div class="h-14 w-14 rounded-2xl bg-purple-600/20 text-purple-400 flex items-center justify-center text-2xl">
+                    <i class="fas fa-users"></i>
                   </div>
                 </div>
               </div>
 
-              <div class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/70 p-5 shadow-sm">
-                <div class="flex items-start justify-between gap-4">
+              <div class="glass-card rounded-3xl p-6 neon-glow hover:scale-[1.02] transition-transform duration-200">
+                <div class="flex items-start justify-between">
                   <div>
-                    <div class="text-sm text-slate-500 dark:text-slate-400">الاستفسارات الجديدة</div>
-                    <div class="text-3xl font-extrabold mt-1" id="newInquiries">0</div>
-                    <a href="#" data-tab="inquiries" class="inline-flex items-center gap-2 mt-3 text-sm font-semibold text-amber-700 dark:text-amber-300 hover:underline">
-                      عرض الكل <i class="fas fa-arrow-left"></i>
+                    <div class="text-sm text-amber-300 mb-1">الاستفسارات الجديدة</div>
+                    <div class="text-4xl font-black text-white" id="newInquiries">0</div>
+                    <a href="#" data-tab="inquiries" class="inline-flex items-center gap-2 mt-4 text-sm font-semibold text-amber-400 hover:text-amber-300 transition">
+                      عرض الكل <i class="fas fa-arrow-left text-xs"></i>
                     </a>
                   </div>
-                  <div class="h-12 w-12 rounded-2xl grid place-items-center bg-amber-600/10 text-amber-700 dark:text-amber-300 dark:bg-amber-400/10">
-                    <i class="fas fa-envelope text-lg"></i>
+                  <div class="h-14 w-14 rounded-2xl bg-amber-600/20 text-amber-400 flex items-center justify-center text-2xl">
+                    <i class="fas fa-envelope"></i>
                   </div>
                 </div>
               </div>
 
-              <div class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/70 p-5 shadow-sm">
-                <div class="flex items-start justify-between gap-4">
+              <div class="glass-card rounded-3xl p-6 neon-glow hover:scale-[1.02] transition-transform duration-200">
+                <div class="flex items-start justify-between">
                   <div>
-                    <div class="text-sm text-slate-500 dark:text-slate-400">الطلبات المعتمدة</div>
-                    <div class="text-3xl font-extrabold mt-1" id="approvedResults">0</div>
-                    <a href="#" data-tab="results" class="inline-flex items-center gap-2 mt-3 text-sm font-semibold text-violet-700 dark:text-violet-300 hover:underline">
-                      عرض الكل <i class="fas fa-arrow-left"></i>
+                    <div class="text-sm text-violet-300 mb-1">الطلبات المعتمدة</div>
+                    <div class="text-4xl font-black text-white" id="approvedResults">0</div>
+                    <a href="#" data-tab="results" class="inline-flex items-center gap-2 mt-4 text-sm font-semibold text-violet-400 hover:text-violet-300 transition">
+                      عرض الكل <i class="fas fa-arrow-left text-xs"></i>
                     </a>
                   </div>
-                  <div class="h-12 w-12 rounded-2xl grid place-items-center bg-violet-600/10 text-violet-700 dark:text-violet-300 dark:bg-violet-400/10">
-                    <i class="fas fa-check-circle text-lg"></i>
+                  <div class="h-14 w-14 rounded-2xl bg-violet-600/20 text-violet-400 flex items-center justify-center text-2xl">
+                    <i class="fas fa-check-circle"></i>
                   </div>
                 </div>
               </div>
             </div>
 
             <!-- Recent bookings -->
-            <div class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/70 shadow-sm">
-              <div class="p-5 flex items-center justify-between">
+            <div class="glass-card rounded-3xl p-5">
+              <div class="flex items-center justify-between mb-4">
                 <div>
-                  <h2 class="text-lg font-bold">آخر الطلبات</h2>
-                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">عرض آخر 5 طلبات بشكل مرتب</p>
+                  <h2 class="text-xl font-bold text-white">آخر الطلبات</h2>
+                  <p class="text-xs text-gray-400">آخر 5 طلبات انضمام</p>
                 </div>
-                <div class="hidden sm:flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-                  <i class="fas fa-table"></i><span>Auto</span>
+                <div class="text-purple-400 bg-purple-600/20 px-3 py-1.5 rounded-full text-xs">
+                  <i class="fas fa-table ml-1"></i> محدث تلقائياً
                 </div>
               </div>
               <div class="overflow-auto nice-scroll">
-                <table class="min-w-full text-sm">
-                  <thead class="bg-slate-50 dark:bg-slate-950/40 text-slate-500 dark:text-slate-400">
+                <table class="w-full text-sm">
+                  <thead class="border-b border-white/10 text-gray-400">
                     <tr>
                       <th class="px-5 py-3 text-right font-semibold">الاسم</th>
                       <th class="px-5 py-3 text-right font-semibold">رقم الهاتف</th>
@@ -272,8 +315,8 @@
                       <th class="px-5 py-3 text-right font-semibold">التاريخ</th>
                     </tr>
                   </thead>
-                  <tbody id="recentBookings" class="divide-y divide-slate-200/70 dark:divide-slate-800/70">
-                    <!-- سيتم ملؤه بالبيانات -->
+                  <tbody id="recentBookings" class="divide-y divide-white/5">
+                    <!-- filled by js -->
                   </tbody>
                 </table>
               </div>
@@ -282,27 +325,23 @@
 
           <!-- Bookings Tab -->
           <section id="bookingsTab" class="tab-content hidden space-y-4">
-            <div class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/70 shadow-sm">
-              <div class="p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div class="glass-card rounded-3xl p-5">
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
                 <div>
-                  <h2 class="text-lg font-bold">طلبات الانضمام</h2>
-                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">فلتر سريع + جدول متجاوب</p>
+                  <h2 class="text-xl font-bold text-white">طلبات الانضمام</h2>
+                  <p class="text-xs text-gray-400">إدارة جميع الطلبات</p>
                 </div>
-                <div class="flex items-center gap-2">
-                  <select id="bookingFilter"
-                          class="h-10 rounded-2xl px-4 border border-slate-200/70 dark:border-slate-800/70
-                                 bg-white dark:bg-slate-950/40 text-sm">
-                    <option value="all">الكل</option>
-                    <option value="pending">قيد الانتظار</option>
-                    <option value="approved">مقبولة</option>
-                    <option value="rejected">مرفوضة</option>
-                  </select>
-                </div>
+                <select id="bookingFilter" class="h-10 rounded-2xl px-4 glass border border-white/10 text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500">
+                  <option value="all" class="bg-gray-900">الكل</option>
+                  <option value="pending" class="bg-gray-900">قيد الانتظار</option>
+                  <option value="approved" class="bg-gray-900">مقبولة</option>
+                  <option value="rejected" class="bg-gray-900">مرفوضة</option>
+                </select>
               </div>
 
               <div class="overflow-auto nice-scroll">
-                <table class="min-w-full text-sm">
-                  <thead class="bg-slate-50 dark:bg-slate-950/40 text-slate-500 dark:text-slate-400">
+                <table class="w-full text-sm">
+                  <thead class="border-b border-white/10 text-gray-400">
                     <tr>
                       <th class="px-5 py-3 text-right font-semibold">الاسم</th>
                       <th class="px-5 py-3 text-right font-semibold">البريد</th>
@@ -314,8 +353,8 @@
                       <th class="px-5 py-3 text-right font-semibold">الإجراءات</th>
                     </tr>
                   </thead>
-                  <tbody id="bookingsTable" class="divide-y divide-slate-200/70 dark:divide-slate-800/70">
-                    <!-- سيتم ملؤه بالبيانات -->
+                  <tbody id="bookingsTable" class="divide-y divide-white/5">
+                    <!-- filled by js -->
                   </tbody>
                 </table>
               </div>
@@ -324,109 +363,81 @@
 
           <!-- Messages Tab -->
           <section id="messagesTab" class="tab-content hidden space-y-6">
-            <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-5">
               <!-- Send message -->
-              <div class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/70 shadow-sm">
-                <div class="p-5 border-b border-slate-200/70 dark:border-slate-800/70">
-                  <h2 class="text-lg font-bold">إرسال رسالة إلى اللاعب</h2>
-                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">نموذج بسيط وواضح</p>
-                </div>
-                <div class="p-5">
-                  <form id="sendMessageForm" class="space-y-4">
-                    <div>
-                      <label class="block text-sm font-semibold mb-1">البريد الإلكتروني للاعب</label>
-                      <input type="email" id="playerEmail" required
-                             class="w-full h-11 rounded-2xl px-4 border border-slate-200/70 dark:border-slate-800/70
-                                    bg-white dark:bg-slate-950/40 outline-none focus:ring-4 focus:ring-indigo-500/15">
-                    </div>
-
-                    <div>
-                      <label class="block text-sm font-semibold mb-1">اسم المرسل (اختياري)</label>
-                      <input type="text" id="senderName" placeholder="STORE King个ESPORTSツ"
-                             class="w-full h-11 rounded-2xl px-4 border border-slate-200/70 dark:border-slate-800/70
-                                    bg-white dark:bg-slate-950/40 outline-none focus:ring-4 focus:ring-indigo-500/15">
-                    </div>
-
-                    <div>
-                      <label class="block text-sm font-semibold mb-1">الرسالة</label>
-                      <textarea id="messageContent" rows="5" required
-                                class="w-full rounded-2xl px-4 py-3 border border-slate-200/70 dark:border-slate-800/70
-                                       bg-white dark:bg-slate-950/40 outline-none focus:ring-4 focus:ring-indigo-500/15"></textarea>
-                    </div>
-
-                    <button type="submit"
-                            class="h-11 px-5 rounded-2xl bg-indigo-600 text-white font-bold
-                                   hover:bg-indigo-700 active:scale-[0.99] transition">
-                      <i class="fas fa-paper-plane ml-2"></i> إرسال
-                    </button>
-                  </form>
-
-                  <div id="messageResponse" class="mt-4 hidden"></div>
-                </div>
+              <div class="glass-card rounded-3xl p-5">
+                <h2 class="text-xl font-bold text-white mb-2">إرسال رسالة إلى اللاعب</h2>
+                <p class="text-xs text-gray-400 mb-4">نموذج بسيط وواضح</p>
+                <form id="sendMessageForm" class="space-y-4">
+                  <div>
+                    <label class="block text-sm font-semibold mb-1 text-gray-300">البريد الإلكتروني للاعب</label>
+                    <input type="email" id="playerEmail" required
+                           class="w-full h-11 rounded-2xl px-4 glass border border-white/10 bg-white/5 text-white placeholder-gray-500 outline-none focus:ring-2 focus:ring-purple-500">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-semibold mb-1 text-gray-300">اسم المرسل (اختياري)</label>
+                    <input type="text" id="senderName" placeholder="STORE King个ESPORTSツ"
+                           class="w-full h-11 rounded-2xl px-4 glass border border-white/10 bg-white/5 text-white placeholder-gray-500 outline-none focus:ring-2 focus:ring-purple-500">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-semibold mb-1 text-gray-300">الرسالة</label>
+                    <textarea id="messageContent" rows="5" required
+                              class="w-full rounded-2xl px-4 py-3 glass border border-white/10 bg-white/5 text-white placeholder-gray-500 outline-none focus:ring-2 focus:ring-purple-500"></textarea>
+                  </div>
+                  <button type="submit" class="h-11 px-6 rounded-2xl bg-gradient-to-l from-purple-600 to-blue-600 text-white font-bold btn-glow">
+                    <i class="fas fa-paper-plane ml-2"></i> إرسال
+                  </button>
+                </form>
+                <div id="messageResponse" class="mt-4 hidden"></div>
               </div>
 
               <!-- Upload result -->
-              <div class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/70 shadow-sm">
-                <div class="p-5 border-b border-slate-200/70 dark:border-slate-800/70">
-                  <h2 class="text-lg font-bold">رفع نتيجة اللاعب</h2>
-                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">رفع ملفات PDF/صور بشكل مرتب</p>
-                </div>
-                <div class="p-5">
-                  <form id="uploadResultForm" enctype="multipart/form-data" class="space-y-4">
-                    <div>
-                      <label class="block text-sm font-semibold mb-1">رقم هاتف اللاعب</label>
-                      <input type="tel" id="playerPhone" required
-                             class="w-full h-11 rounded-2xl px-4 border border-slate-200/70 dark:border-slate-800/70
-                                    bg-white dark:bg-slate-950/40 outline-none focus:ring-4 focus:ring-emerald-500/15">
-                    </div>
-
-                    <div>
-                      <label class="block text-sm font-semibold mb-1">اسم اللاعب (اختياري)</label>
-                      <input type="text" id="playerName"
-                             class="w-full h-11 rounded-2xl px-4 border border-slate-200/70 dark:border-slate-800/70
-                                    bg-white dark:bg-slate-950/40 outline-none focus:ring-4 focus:ring-emerald-500/15">
-                    </div>
-
-                    <div>
-                      <label class="block text-sm font-semibold mb-1">ملف النتيجة</label>
-                      <input type="file" id="resultFile" name="resultFile" required accept=".pdf,.jpg,.jpeg,.png"
-                             class="w-full rounded-2xl px-4 py-3 border border-slate-200/70 dark:border-slate-800/70
-                                    bg-white dark:bg-slate-950/40">
-                    </div>
-
-                    <button type="submit"
-                            class="h-11 px-5 rounded-2xl bg-emerald-600 text-white font-bold
-                                   hover:bg-emerald-700 active:scale-[0.99] transition">
-                      <i class="fas fa-cloud-upload-alt ml-2"></i> رفع
-                    </button>
-                  </form>
-
-                  <div id="uploadResponse" class="mt-4 hidden"></div>
-                </div>
+              <div class="glass-card rounded-3xl p-5">
+                <h2 class="text-xl font-bold text-white mb-2">رفع نتيجة اللاعب</h2>
+                <p class="text-xs text-gray-400 mb-4">رفع ملفات PDF/صور بشكل مرتب</p>
+                <form id="uploadResultForm" enctype="multipart/form-data" class="space-y-4">
+                  <div>
+                    <label class="block text-sm font-semibold mb-1 text-gray-300">رقم هاتف اللاعب</label>
+                    <input type="tel" id="playerPhone" required
+                           class="w-full h-11 rounded-2xl px-4 glass border border-white/10 bg-white/5 text-white placeholder-gray-500 outline-none focus:ring-2 focus:ring-emerald-500">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-semibold mb-1 text-gray-300">اسم اللاعب (اختياري)</label>
+                    <input type="text" id="playerName"
+                           class="w-full h-11 rounded-2xl px-4 glass border border-white/10 bg-white/5 text-white placeholder-gray-500 outline-none focus:ring-2 focus:ring-emerald-500">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-semibold mb-1 text-gray-300">ملف النتيجة</label>
+                    <input type="file" id="resultFile" name="resultFile" required accept=".pdf,.jpg,.jpeg,.png"
+                           class="w-full rounded-2xl px-4 py-3 glass border border-white/10 bg-white/5 text-white file:bg-purple-600 file:border-0 file:rounded-xl file:text-white file:px-4 file:py-2 file:ml-2 hover:file:bg-purple-700">
+                  </div>
+                  <button type="submit" class="h-11 px-6 rounded-2xl bg-gradient-to-l from-emerald-600 to-teal-600 text-white font-bold btn-glow">
+                    <i class="fas fa-cloud-upload-alt ml-2"></i> رفع
+                  </button>
+                </form>
+                <div id="uploadResponse" class="mt-4 hidden"></div>
               </div>
             </div>
           </section>
 
           <!-- Inquiries Tab -->
           <section id="inquiriesTab" class="tab-content hidden space-y-4">
-            <div class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/70 shadow-sm">
-              <div class="p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div class="glass-card rounded-3xl p-5">
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
                 <div>
-                  <h2 class="text-lg font-bold">الاستفسارات</h2>
-                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">فلترة (جديدة/تم الرد)</p>
+                  <h2 class="text-xl font-bold text-white">الاستفسارات</h2>
+                  <p class="text-xs text-gray-400">فلترة (جديدة/تم الرد)</p>
                 </div>
-                <select id="inquiryFilter"
-                        class="h-10 rounded-2xl px-4 border border-slate-200/70 dark:border-slate-800/70
-                               bg-white dark:bg-slate-950/40 text-sm">
-                  <option value="all">الكل</option>
-                  <option value="new">جديدة</option>
-                  <option value="responded">تم الرد</option>
+                <select id="inquiryFilter" class="h-10 rounded-2xl px-4 glass border border-white/10 text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500">
+                  <option value="all" class="bg-gray-900">الكل</option>
+                  <option value="new" class="bg-gray-900">جديدة</option>
+                  <option value="responded" class="bg-gray-900">تم الرد</option>
                 </select>
               </div>
 
               <div class="overflow-auto nice-scroll">
-                <table class="min-w-full text-sm">
-                  <thead class="bg-slate-50 dark:bg-slate-950/40 text-slate-500 dark:text-slate-400">
+                <table class="w-full text-sm">
+                  <thead class="border-b border-white/10 text-gray-400">
                     <tr>
                       <th class="px-5 py-3 text-right font-semibold">الاسم</th>
                       <th class="px-5 py-3 text-right font-semibold">البريد</th>
@@ -436,8 +447,8 @@
                       <th class="px-5 py-3 text-right font-semibold">الإجراءات</th>
                     </tr>
                   </thead>
-                  <tbody id="inquiriesTable" class="divide-y divide-slate-200/70 dark:divide-slate-800/70">
-                    <!-- سيتم ملؤه بالبيانات -->
+                  <tbody id="inquiriesTable" class="divide-y divide-white/5">
+                    <!-- filled by js -->
                   </tbody>
                 </table>
               </div>
@@ -446,15 +457,13 @@
 
           <!-- Results Tab -->
           <section id="resultsTab" class="tab-content hidden space-y-4">
-            <div class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/70 shadow-sm">
-              <div class="p-5">
-                <h2 class="text-lg font-bold">النتائج المعتمدة</h2>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">جدول بسيط + أزرار واضحة</p>
-              </div>
+            <div class="glass-card rounded-3xl p-5">
+              <h2 class="text-xl font-bold text-white mb-2">النتائج المعتمدة</h2>
+              <p class="text-xs text-gray-400 mb-4">جدول بسيط + أزرار واضحة</p>
 
               <div class="overflow-auto nice-scroll">
-                <table class="min-w-full text-sm">
-                  <thead class="bg-slate-50 dark:bg-slate-950/40 text-slate-500 dark:text-slate-400">
+                <table class="w-full text-sm">
+                  <thead class="border-b border-white/10 text-gray-400">
                     <tr>
                       <th class="px-5 py-3 text-right font-semibold">الاسم</th>
                       <th class="px-5 py-3 text-right font-semibold">رقم الهاتف</th>
@@ -462,8 +471,8 @@
                       <th class="px-5 py-3 text-right font-semibold">الإجراءات</th>
                     </tr>
                   </thead>
-                  <tbody id="resultsTable" class="divide-y divide-slate-200/70 dark:divide-slate-800/70">
-                    <!-- سيتم ملؤه بالبيانات -->
+                  <tbody id="resultsTable" class="divide-y divide-white/5">
+                    <!-- filled by js -->
                   </tbody>
                 </table>
               </div>
@@ -474,158 +483,112 @@
     </div>
   </div>
 
-  <!-- Modals (نفس الـ IDs بتاعتك عشان الأحداث تفضل شغالة) -->
+  <!-- Modals (نفس الـ IDs مع تحسينات بصرية) -->
   <!-- Edit Booking Modal -->
   <div id="editBookingModal" class="fixed inset-0 hidden z-[70]">
-    <div class="absolute inset-0 bg-black/40"></div>
+    <div class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
     <div class="absolute inset-0 flex items-center justify-center p-4">
-      <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/70 shadow-xl">
-        <div class="p-4 flex items-center justify-between border-b border-slate-200/70 dark:border-slate-800/70">
-          <h3 class="font-bold">تعديل حالة الطلب</h3>
-          <button id="closeBookingModal" class="h-10 w-10 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800">
+      <div class="w-full max-w-md rounded-3xl glass-card p-5">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-xl font-bold text-white">تعديل حالة الطلب</h3>
+          <button id="closeBookingModal" class="h-10 w-10 rounded-2xl hover:bg-white/10 text-gray-300">
             <i class="fas fa-times"></i>
           </button>
         </div>
-        <div class="p-5">
-          <form id="editBookingForm" class="space-y-4">
-            <input type="hidden" id="editBookingId">
-            <div>
-              <label class="block text-sm font-semibold mb-1">الحالة</label>
-              <select id="editBookingStatus"
-                      class="w-full h-11 rounded-2xl px-4 border border-slate-200/70 dark:border-slate-800/70
-                             bg-white dark:bg-slate-950/40">
-                <option value="pending">قيد الانتظار</option>
-                <option value="approved">مقبول</option>
-                <option value="rejected">مرفوض</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-sm font-semibold mb-1">ملاحظات</label>
-              <textarea id="editBookingNotes" rows="3"
-                        class="w-full rounded-2xl px-4 py-3 border border-slate-200/70 dark:border-slate-800/70
-                               bg-white dark:bg-slate-950/40"></textarea>
-            </div>
-            <div class="flex justify-end gap-2">
-              <button type="button" id="cancelBookingEdit"
-                      class="h-11 px-4 rounded-2xl border border-slate-200/70 dark:border-slate-800/70 hover:bg-slate-50 dark:hover:bg-slate-800">
-                إلغاء
-              </button>
-              <button type="submit"
-                      class="h-11 px-4 rounded-2xl bg-indigo-600 text-white font-bold hover:bg-indigo-700">
-                حفظ
-              </button>
-            </div>
-          </form>
-        </div>
+        <form id="editBookingForm" class="space-y-4">
+          <input type="hidden" id="editBookingId">
+          <div>
+            <label class="block text-sm font-semibold mb-1 text-gray-300">الحالة</label>
+            <select id="editBookingStatus" class="w-full h-11 rounded-2xl px-4 glass border border-white/10 bg-white/5 text-white outline-none focus:ring-2 focus:ring-purple-500">
+              <option value="pending" class="bg-gray-900">قيد الانتظار</option>
+              <option value="approved" class="bg-gray-900">مقبول</option>
+              <option value="rejected" class="bg-gray-900">مرفوض</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold mb-1 text-gray-300">ملاحظات</label>
+            <textarea id="editBookingNotes" rows="3" class="w-full rounded-2xl px-4 py-3 glass border border-white/10 bg-white/5 text-white outline-none focus:ring-2 focus:ring-purple-500"></textarea>
+          </div>
+          <div class="flex justify-end gap-2">
+            <button type="button" id="cancelBookingEdit" class="h-11 px-4 rounded-2xl glass hover:bg-white/10 text-gray-300">إلغاء</button>
+            <button type="submit" class="h-11 px-4 rounded-2xl bg-gradient-to-l from-purple-600 to-blue-600 text-white font-bold btn-glow">حفظ</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
 
   <!-- Respond Inquiry Modal -->
   <div id="respondInquiryModal" class="fixed inset-0 hidden z-[70]">
-    <div class="absolute inset-0 bg-black/40"></div>
+    <div class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
     <div class="absolute inset-0 flex items-center justify-center p-4">
-      <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/70 shadow-xl">
-        <div class="p-4 flex items-center justify-between border-b border-slate-200/70 dark:border-slate-800/70">
-          <h3 class="font-bold">الرد على الاستفسار</h3>
-          <button id="closeInquiryModal" class="h-10 w-10 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800">
+      <div class="w-full max-w-md rounded-3xl glass-card p-5">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-xl font-bold text-white">الرد على الاستفسار</h3>
+          <button id="closeInquiryModal" class="h-10 w-10 rounded-2xl hover:bg-white/10 text-gray-300">
             <i class="fas fa-times"></i>
           </button>
         </div>
-        <div class="p-5">
-          <form id="respondInquiryForm" class="space-y-4">
-            <input type="hidden" id="respondInquiryId">
-            <div>
-              <label class="block text-sm font-semibold mb-1">الرد</label>
-              <textarea id="inquiryResponse" rows="4"
-                        class="w-full rounded-2xl px-4 py-3 border border-slate-200/70 dark:border-slate-800/70
-                               bg-white dark:bg-slate-950/40"></textarea>
-            </div>
-            <div class="flex justify-end gap-2">
-              <button type="button" id="cancelInquiryResponse"
-                      class="h-11 px-4 rounded-2xl border border-slate-200/70 dark:border-slate-800/70 hover:bg-slate-50 dark:hover:bg-slate-800">
-                إلغاء
-              </button>
-              <button type="submit"
-                      class="h-11 px-4 rounded-2xl bg-emerald-600 text-white font-bold hover:bg-emerald-700">
-                إرسال الرد
-              </button>
-            </div>
-          </form>
-        </div>
+        <form id="respondInquiryForm" class="space-y-4">
+          <input type="hidden" id="respondInquiryId">
+          <div>
+            <label class="block text-sm font-semibold mb-1 text-gray-300">الرد</label>
+            <textarea id="inquiryResponse" rows="4" class="w-full rounded-2xl px-4 py-3 glass border border-white/10 bg-white/5 text-white outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+          </div>
+          <div class="flex justify-end gap-2">
+            <button type="button" id="cancelInquiryResponse" class="h-11 px-4 rounded-2xl glass hover:bg-white/10 text-gray-300">إلغاء</button>
+            <button type="submit" class="h-11 px-4 rounded-2xl bg-gradient-to-l from-emerald-600 to-teal-600 text-white font-bold btn-glow">إرسال الرد</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
 
   <!-- Edit Result Modal -->
   <div id="editResultModal" class="fixed inset-0 hidden z-[70]">
-    <div class="absolute inset-0 bg-black/40"></div>
+    <div class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
     <div class="absolute inset-0 flex items-center justify-center p-4">
-      <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/70 shadow-xl">
-        <div class="p-4 flex items-center justify-between border-b border-slate-200/70 dark:border-slate-800/70">
-          <h3 class="font-bold">تعديل النتيجة</h3>
-          <button id="closeResultModal" class="h-10 w-10 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800">
+      <div class="w-full max-w-md rounded-3xl glass-card p-5">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-xl font-bold text-white">تعديل النتيجة</h3>
+          <button id="closeResultModal" class="h-10 w-10 rounded-2xl hover:bg-white/10 text-gray-300">
             <i class="fas fa-times"></i>
           </button>
         </div>
-        <div class="p-5">
-          <form id="editResultForm" enctype="multipart/form-data" class="space-y-4">
-            <input type="hidden" id="editResultId" name="id">
-            <div>
-              <label class="block text-sm font-semibold mb-1">رقم هاتف اللاعب *</label>
-              <input type="tel" id="editPlayerPhone" name="playerPhone" required
-                     class="w-full h-11 rounded-2xl px-4 border border-slate-200/70 dark:border-slate-800/70
-                            bg-white dark:bg-slate-950/40">
-            </div>
-            <div>
-              <label class="block text-sm font-semibold mb-1">اسم اللاعب</label>
-              <input type="text" id="editPlayerName"
-                     class="w-full h-11 rounded-2xl px-4 border border-slate-200/70 dark:border-slate-800/70
-                            bg-white dark:bg-slate-950/40">
-            </div>
-            <div>
-              <label class="block text-sm font-semibold mb-1">ملف النتيجة الجديدة (اختياري)</label>
-              <input type="file" id="editResultFile" name="editResultFile" accept=".pdf,.jpg,.jpeg,.png"
-                     class="w-full rounded-2xl px-4 py-3 border border-slate-200/70 dark:border-slate-800/70
-                            bg-white dark:bg-slate-950/40">
-            </div>
-            <div class="flex justify-end gap-2">
-              <button type="button" id="cancelResultEdit"
-                      class="h-11 px-4 rounded-2xl border border-slate-200/70 dark:border-slate-800/70 hover:bg-slate-50 dark:hover:bg-slate-800">
-                إلغاء
-              </button>
-              <button type="submit"
-                      class="h-11 px-4 rounded-2xl bg-indigo-600 text-white font-bold hover:bg-indigo-700">
-                حفظ التعديلات
-              </button>
-            </div>
-          </form>
-        </div>
+        <form id="editResultForm" enctype="multipart/form-data" class="space-y-4">
+          <input type="hidden" id="editResultId" name="id">
+          <div>
+            <label class="block text-sm font-semibold mb-1 text-gray-300">رقم هاتف اللاعب *</label>
+            <input type="tel" id="editPlayerPhone" name="playerPhone" required class="w-full h-11 rounded-2xl px-4 glass border border-white/10 bg-white/5 text-white outline-none focus:ring-2 focus:ring-purple-500">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold mb-1 text-gray-300">اسم اللاعب</label>
+            <input type="text" id="editPlayerName" class="w-full h-11 rounded-2xl px-4 glass border border-white/10 bg-white/5 text-white outline-none focus:ring-2 focus:ring-purple-500">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold mb-1 text-gray-300">ملف النتيجة الجديدة (اختياري)</label>
+            <input type="file" id="editResultFile" name="editResultFile" accept=".pdf,.jpg,.jpeg,.png" class="w-full rounded-2xl px-4 py-3 glass border border-white/10 bg-white/5 text-white file:bg-purple-600 file:border-0 file:rounded-xl file:text-white file:px-4 file:py-2 file:ml-2 hover:file:bg-purple-700">
+          </div>
+          <div class="flex justify-end gap-2">
+            <button type="button" id="cancelResultEdit" class="h-11 px-4 rounded-2xl glass hover:bg-white/10 text-gray-300">إلغاء</button>
+            <button type="submit" class="h-11 px-4 rounded-2xl bg-gradient-to-l from-purple-600 to-blue-600 text-white font-bold btn-glow">حفظ التعديلات</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
 
   <!-- Delete Booking Modal -->
   <div id="deleteBookingModal" class="fixed inset-0 hidden z-[70]">
-    <div class="absolute inset-0 bg-black/40"></div>
+    <div class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
     <div class="absolute inset-0 flex items-center justify-center p-4">
-      <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/70 shadow-xl">
-        <div class="p-4 border-b border-slate-200/70 dark:border-slate-800/70">
-          <h3 class="font-bold">حذف الطلب</h3>
-        </div>
-        <div class="p-5 space-y-4">
-          <p class="text-sm text-slate-600 dark:text-slate-300">هل أنت متأكد من حذف هذا الطلب؟</p>
-          <input type="hidden" id="deleteBookingId">
-          <div class="flex justify-end gap-2">
-            <button type="button" id="cancelDeleteBooking"
-                    class="h-11 px-4 rounded-2xl border border-slate-200/70 dark:border-slate-800/70 hover:bg-slate-50 dark:hover:bg-slate-800">
-              إلغاء
-            </button>
-            <button type="button" id="confirmDeleteBooking"
-                    class="h-11 px-4 rounded-2xl bg-rose-600 text-white font-bold hover:bg-rose-700">
-              حذف
-            </button>
-          </div>
+      <div class="w-full max-w-md rounded-3xl glass-card p-5">
+        <h3 class="text-xl font-bold text-white mb-3">حذف الطلب</h3>
+        <p class="text-sm text-gray-300 mb-5">هل أنت متأكد من حذف هذا الطلب؟</p>
+        <input type="hidden" id="deleteBookingId">
+        <div class="flex justify-end gap-2">
+          <button type="button" id="cancelDeleteBooking" class="h-11 px-4 rounded-2xl glass hover:bg-white/10 text-gray-300">إلغاء</button>
+          <button type="button" id="confirmDeleteBooking" class="h-11 px-4 rounded-2xl bg-gradient-to-l from-rose-600 to-red-600 text-white font-bold btn-glow">حذف</button>
         </div>
       </div>
     </div>
@@ -633,25 +596,15 @@
 
   <!-- Delete Inquiry Modal -->
   <div id="deleteInquiryModal" class="fixed inset-0 hidden z-[70]">
-    <div class="absolute inset-0 bg-black/40"></div>
+    <div class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
     <div class="absolute inset-0 flex items-center justify-center p-4">
-      <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/70 shadow-xl">
-        <div class="p-4 border-b border-slate-200/70 dark:border-slate-800/70">
-          <h3 class="font-bold">حذف الاستفسار</h3>
-        </div>
-        <div class="p-5 space-y-4">
-          <p class="text-sm text-slate-600 dark:text-slate-300">هل أنت متأكد من حذف هذا الاستفسار؟</p>
-          <input type="hidden" id="deleteInquiryId">
-          <div class="flex justify-end gap-2">
-            <button type="button" id="cancelDeleteInquiry"
-                    class="h-11 px-4 rounded-2xl border border-slate-200/70 dark:border-slate-800/70 hover:bg-slate-50 dark:hover:bg-slate-800">
-              إلغاء
-            </button>
-            <button type="button" id="confirmDeleteInquiry"
-                    class="h-11 px-4 rounded-2xl bg-rose-600 text-white font-bold hover:bg-rose-700">
-              حذف
-            </button>
-          </div>
+      <div class="w-full max-w-md rounded-3xl glass-card p-5">
+        <h3 class="text-xl font-bold text-white mb-3">حذف الاستفسار</h3>
+        <p class="text-sm text-gray-300 mb-5">هل أنت متأكد من حذف هذا الاستفسار؟</p>
+        <input type="hidden" id="deleteInquiryId">
+        <div class="flex justify-end gap-2">
+          <button type="button" id="cancelDeleteInquiry" class="h-11 px-4 rounded-2xl glass hover:bg-white/10 text-gray-300">إلغاء</button>
+          <button type="button" id="confirmDeleteInquiry" class="h-11 px-4 rounded-2xl bg-gradient-to-l from-rose-600 to-red-600 text-white font-bold btn-glow">حذف</button>
         </div>
       </div>
     </div>
@@ -659,7 +612,7 @@
 
   <script>
     // =========================
-    // Helpers (toasts + badges)
+    // Helpers (toasts + badges) - نفس الكود بالضبط
     // =========================
     document.getElementById('yearNow').textContent = new Date().getFullYear();
 
@@ -681,9 +634,9 @@
 
     function getStatusClass(status) {
       switch(status) {
-        case 'approved': return 'bg-emerald-600/10 text-emerald-700 dark:text-emerald-300 dark:bg-emerald-400/10';
-        case 'rejected': return 'bg-rose-600/10 text-rose-700 dark:text-rose-300 dark:bg-rose-400/10';
-        default: return 'bg-amber-600/10 text-amber-800 dark:text-amber-300 dark:bg-amber-400/10';
+        case 'approved': return 'bg-emerald-600/20 text-emerald-300';
+        case 'rejected': return 'bg-rose-600/20 text-rose-300';
+        default: return 'bg-amber-600/20 text-amber-300';
       }
     }
 
@@ -699,7 +652,7 @@
     function showError(message) { toast(message, "error"); }
 
     // =========================
-    // Dark mode (class strategy)
+    // Dark mode (نفس الكود)
     // =========================
     const darkBtn = document.getElementById('toggleDarkMode');
     function applyDarkModeFromStorage() {
@@ -747,14 +700,13 @@
       const target = document.getElementById(tabId + 'Tab');
       if (target) target.classList.remove('hidden');
 
-      navItems.forEach(i => i.classList.remove('bg-slate-100', 'dark:bg-slate-800/70'));
+      navItems.forEach(i => i.classList.remove('bg-white/10', 'text-white'));
       const active = document.querySelector(`.nav-item[data-tab="${tabId}"]`);
       if (active) {
-        active.classList.add('bg-slate-100', 'dark:bg-slate-800/70');
+        active.classList.add('bg-white/10', 'text-white');
         document.getElementById('pageTitle').textContent = active.querySelector('span.font-semibold')?.textContent?.trim() || 'لوحة التحكم';
       }
 
-      // اغلق السايدبار على الموبايل بعد اختيار التاب
       if (window.innerWidth < 1024) closeSidebar();
     }
 
@@ -765,11 +717,10 @@
       });
     });
 
-    // set default active
     activateTab('dashboard');
 
     // =========================
-    // Session + Data (نفس منطقك)
+    // Session + Data (نفس الكود تمامًا، مع الحفاظ على كل شيء)
     // =========================
     async function checkSession() {
       try {
@@ -797,7 +748,7 @@
 
         const recentBookings = data.bookings.slice(0, 5);
         const recentBookingsHtml = recentBookings.map(booking => `
-          <tr class="hover:bg-slate-50 dark:hover:bg-slate-950/30 transition">
+          <tr class="hover:bg-white/5 transition">
             <td class="px-5 py-3 whitespace-nowrap">${booking.name}</td>
             <td class="px-5 py-3 whitespace-nowrap">${booking.phone}</td>
             <td class="px-5 py-3 whitespace-nowrap">${booking.duration}</td>
@@ -806,7 +757,7 @@
                 ${getStatusText(booking.status)}
               </span>
             </td>
-            <td class="px-5 py-3 whitespace-nowrap text-slate-600 dark:text-slate-300">
+            <td class="px-5 py-3 whitespace-nowrap text-gray-400">
               ${new Date(booking.createdAt).toLocaleDateString('ar-EG')}
             </td>
           </tr>
@@ -829,7 +780,7 @@
       if (filter !== 'all') filteredBookings = bookings.filter(b => b.status === filter);
 
       const bookingsHtml = filteredBookings.map(booking => `
-        <tr class="hover:bg-slate-50 dark:hover:bg-slate-950/30 transition">
+        <tr class="hover:bg-white/5 transition">
           <td class="px-5 py-3 whitespace-nowrap">${booking.name}</td>
           <td class="px-5 py-3 whitespace-nowrap">${booking.email}</td>
           <td class="px-5 py-3 whitespace-nowrap">${booking.phone}</td>
@@ -842,21 +793,21 @@
             </span>
           </td>
           <td class="px-5 py-3 whitespace-nowrap">
-            <button class="edit-booking inline-flex items-center gap-2 px-3 py-2 rounded-2xl text-indigo-600 dark:text-indigo-300 hover:bg-indigo-600/10"
+            <button class="edit-booking inline-flex items-center gap-2 px-3 py-2 rounded-2xl text-purple-400 hover:bg-purple-600/20"
                     data-id="${booking.id}" data-status="${booking.status}" data-notes="${booking.notes || ''}">
               <i class="fas fa-edit"></i><span class="hidden sm:inline">تعديل</span>
             </button>
-            <button class="delete-booking inline-flex items-center gap-2 px-3 py-2 rounded-2xl text-rose-600 dark:text-rose-300 hover:bg-rose-600/10"
+            <button class="delete-booking inline-flex items-center gap-2 px-3 py-2 rounded-2xl text-rose-400 hover:bg-rose-600/20"
                     data-id="${booking.id}">
               <i class="fas fa-trash"></i><span class="hidden sm:inline">حذف</span>
             </button>
             ${booking.gameVideo ? `
               <a href="${booking.gameVideo}" target="_blank"
-                 class="inline-flex items-center gap-2 px-3 py-2 rounded-2xl text-sky-600 dark:text-sky-300 hover:bg-sky-600/10">
+                 class="inline-flex items-center gap-2 px-3 py-2 rounded-2xl text-sky-400 hover:bg-sky-600/20">
                 <i class="fas fa-eye"></i><span class="hidden sm:inline">فيديو</span>
               </a>
               <a href="${booking.gameVideo}" download
-                 class="inline-flex items-center gap-2 px-3 py-2 rounded-2xl text-emerald-600 dark:text-emerald-300 hover:bg-emerald-600/10">
+                 class="inline-flex items-center gap-2 px-3 py-2 rounded-2xl text-emerald-400 hover:bg-emerald-600/20">
                 <i class="fas fa-download"></i><span class="hidden sm:inline">تحميل</span>
               </a>
             ` : ''}
@@ -891,35 +842,35 @@
       }
 
       const inquiriesHtml = filtered.map(inquiry => `
-        <tr class="hover:bg-slate-50 dark:hover:bg-slate-950/30 transition">
+        <tr class="hover:bg-white/5 transition">
           <td class="px-5 py-3 whitespace-nowrap">${inquiry.name}</td>
           <td class="px-5 py-3 whitespace-nowrap">${inquiry.email}</td>
           <td class="px-5 py-3 whitespace-nowrap">${inquiry.phone}</td>
           <td class="px-5 py-3">
-            <div class="max-w-xs truncate text-slate-700 dark:text-slate-200">${inquiry.message}</div>
+            <div class="max-w-xs truncate text-gray-300">${inquiry.message}</div>
           </td>
           <td class="px-5 py-3 whitespace-nowrap">
             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${
               inquiry.status === 'new'
-              ? 'bg-amber-600/10 text-amber-800 dark:text-amber-300 dark:bg-amber-400/10'
-              : 'bg-emerald-600/10 text-emerald-700 dark:text-emerald-300 dark:bg-emerald-400/10'
+              ? 'bg-amber-600/20 text-amber-300'
+              : 'bg-emerald-600/20 text-emerald-300'
             }">
               ${inquiry.status === 'new' ? 'جديد' : 'تم الرد'}
             </span>
           </td>
           <td class="px-5 py-3 whitespace-nowrap">
             ${inquiry.status === 'new' ? `
-              <button class="respond-inquiry inline-flex items-center gap-2 px-3 py-2 rounded-2xl text-emerald-600 dark:text-emerald-300 hover:bg-emerald-600/10"
+              <button class="respond-inquiry inline-flex items-center gap-2 px-3 py-2 rounded-2xl text-emerald-400 hover:bg-emerald-600/20"
                       data-id="${inquiry.id}">
                 <i class="fas fa-reply"></i><span class="hidden sm:inline">رد</span>
               </button>
             ` : ''}
-            <button class="delete-inquiry inline-flex items-center gap-2 px-3 py-2 rounded-2xl text-rose-600 dark:text-rose-300 hover:bg-rose-600/10"
+            <button class="delete-inquiry inline-flex items-center gap-2 px-3 py-2 rounded-2xl text-rose-400 hover:bg-rose-600/20"
                     data-id="${inquiry.id}">
               <i class="fas fa-trash"></i><span class="hidden sm:inline">حذف</span>
             </button>
             ${inquiry.response ? `
-              <button class="view-response inline-flex items-center gap-2 px-3 py-2 rounded-2xl text-sky-600 dark:text-sky-300 hover:bg-sky-600/10"
+              <button class="view-response inline-flex items-center gap-2 px-3 py-2 rounded-2xl text-sky-400 hover:bg-sky-600/20"
                       data-response="${inquiry.response}">
                 <i class="fas fa-eye"></i><span class="hidden sm:inline">عرض</span>
               </button>
@@ -956,14 +907,14 @@
 
       if (!results || !Array.isArray(results)) {
         resultsTable.innerHTML = `
-          <tr><td colspan="4" class="px-5 py-6 text-center text-rose-600">خطأ في تحميل النتائج</td></tr>
+          <tr><td colspan="4" class="px-5 py-6 text-center text-rose-400">خطأ في تحميل النتائج</td></tr>
         `;
         return;
       }
 
       if (results.length === 0) {
         resultsTable.innerHTML = `
-          <tr><td colspan="4" class="px-5 py-6 text-center text-slate-500 dark:text-slate-400">لا توجد نتائج معتمدة حتى الآن</td></tr>
+          <tr><td colspan="4" class="px-5 py-6 text-center text-gray-500">لا توجد نتائج معتمدة حتى الآن</td></tr>
         `;
         return;
       }
@@ -974,22 +925,22 @@
         const uploadedAt = result.uploadedAt ? new Date(result.uploadedAt).toLocaleDateString('ar-EG') : 'غير معروف';
 
         return `
-          <tr class="hover:bg-slate-50 dark:hover:bg-slate-950/30 transition">
+          <tr class="hover:bg-white/5 transition">
             <td class="px-5 py-3 whitespace-nowrap">${playerName}</td>
             <td class="px-5 py-3 whitespace-nowrap">${playerPhone}</td>
-            <td class="px-5 py-3 whitespace-nowrap text-slate-600 dark:text-slate-300">${uploadedAt}</td>
+            <td class="px-5 py-3 whitespace-nowrap text-gray-400">${uploadedAt}</td>
             <td class="px-5 py-3 whitespace-nowrap">
               ${result.fileUrl ? `
                 <a href="${result.fileUrl}" target="_blank"
-                   class="inline-flex items-center gap-2 px-3 py-2 rounded-2xl text-sky-600 dark:text-sky-300 hover:bg-sky-600/10">
+                   class="inline-flex items-center gap-2 px-3 py-2 rounded-2xl text-sky-400 hover:bg-sky-600/20">
                   <i class="fas fa-eye"></i><span class="hidden sm:inline">عرض</span>
                 </a>
               ` : ''}
-              <button class="edit-result inline-flex items-center gap-2 px-3 py-2 rounded-2xl text-amber-700 dark:text-amber-300 hover:bg-amber-600/10"
+              <button class="edit-result inline-flex items-center gap-2 px-3 py-2 rounded-2xl text-amber-400 hover:bg-amber-600/20"
                       data-id="${result.id}" data-phone="${playerPhone}" data-name="${playerName}">
                 <i class="fas fa-edit"></i><span class="hidden sm:inline">تعديل</span>
               </button>
-              <button class="delete-result inline-flex items-center gap-2 px-3 py-2 rounded-2xl text-rose-600 dark:text-rose-300 hover:bg-rose-600/10"
+              <button class="delete-result inline-flex items-center gap-2 px-3 py-2 rounded-2xl text-rose-400 hover:bg-rose-600/20"
                       data-id="${result.id}">
                 <i class="fas fa-trash"></i><span class="hidden sm:inline">حذف</span>
               </button>
@@ -1052,7 +1003,7 @@
     document.getElementById('closeResultModal').addEventListener('click', () => document.getElementById('editResultModal').classList.add('hidden'));
     document.getElementById('cancelResultEdit').addEventListener('click', () => document.getElementById('editResultModal').classList.add('hidden'));
 
-    // Submit handlers (نفس endpoints بتاعتك)
+    // Submit handlers (نفس الـ endpoints)
     document.getElementById('editBookingForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const id = document.getElementById('editBookingId').value;
@@ -1098,18 +1049,18 @@
         responseDiv.classList.remove('hidden');
 
         if (data.success) {
-          responseDiv.innerHTML = `<div class="rounded-2xl border border-emerald-400/30 bg-emerald-600/10 text-emerald-800 dark:text-emerald-200 px-4 py-3">${data.message}</div>`;
+          responseDiv.innerHTML = `<div class="rounded-2xl border border-emerald-400/30 bg-emerald-600/20 text-emerald-300 px-4 py-3">${data.message}</div>`;
           document.getElementById('sendMessageForm').reset();
           showSuccess('تم إرسال الرسالة بنجاح');
         } else {
-          responseDiv.innerHTML = `<div class="rounded-2xl border border-rose-400/30 bg-rose-600/10 text-rose-800 dark:text-rose-200 px-4 py-3">${data.message}</div>`;
+          responseDiv.innerHTML = `<div class="rounded-2xl border border-rose-400/30 bg-rose-600/20 text-rose-300 px-4 py-3">${data.message}</div>`;
           showError(data.message || 'حدث خطأ أثناء إرسال الرسالة');
         }
       } catch (error) {
         console.error('Error sending message:', error);
         const responseDiv = document.getElementById('messageResponse');
         responseDiv.classList.remove('hidden');
-        responseDiv.innerHTML = `<div class="rounded-2xl border border-rose-400/30 bg-rose-600/10 text-rose-800 dark:text-rose-200 px-4 py-3">حدث خطأ أثناء إرسال الرسالة</div>`;
+        responseDiv.innerHTML = `<div class="rounded-2xl border border-rose-400/30 bg-rose-600/20 text-rose-300 px-4 py-3">حدث خطأ أثناء إرسال الرسالة</div>`;
         showError('حدث خطأ أثناء إرسال الرسالة');
       }
     });
@@ -1129,19 +1080,19 @@
         responseDiv.classList.remove('hidden');
 
         if (data.success) {
-          responseDiv.innerHTML = `<div class="rounded-2xl border border-emerald-400/30 bg-emerald-600/10 text-emerald-800 dark:text-emerald-200 px-4 py-3">${data.message}</div>`;
+          responseDiv.innerHTML = `<div class="rounded-2xl border border-emerald-400/30 bg-emerald-600/20 text-emerald-300 px-4 py-3">${data.message}</div>`;
           document.getElementById('uploadResultForm').reset();
           showSuccess('تم رفع النتيجة بنجاح');
           loadData();
         } else {
-          responseDiv.innerHTML = `<div class="rounded-2xl border border-rose-400/30 bg-rose-600/10 text-rose-800 dark:text-rose-200 px-4 py-3">${data.message}</div>`;
+          responseDiv.innerHTML = `<div class="rounded-2xl border border-rose-400/30 bg-rose-600/20 text-rose-300 px-4 py-3">${data.message}</div>`;
           showError(data.message || 'حدث خطأ أثناء رفع الملف');
         }
       } catch (error) {
         console.error('Error uploading result:', error);
         const responseDiv = document.getElementById('uploadResponse');
         responseDiv.classList.remove('hidden');
-        responseDiv.innerHTML = `<div class="rounded-2xl border border-rose-400/30 bg-rose-600/10 text-rose-800 dark:text-rose-200 px-4 py-3">حدث خطأ أثناء رفع الملف</div>`;
+        responseDiv.innerHTML = `<div class="rounded-2xl border border-rose-400/30 bg-rose-600/20 text-rose-300 px-4 py-3">حدث خطأ أثناء رفع الملف</div>`;
         showError('حدث خطأ أثناء رفع الملف');
       }
     });
