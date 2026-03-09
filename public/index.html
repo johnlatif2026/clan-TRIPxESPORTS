@@ -588,8 +588,82 @@
     <i class="fas fa-arrow-up text-2xl"></i>
   </a>
 
+
+          <div class="mt-8">
+            <button type="submit" class="neon-button w-full py-4 rounded-xl font-bold text-xl">🚀 تقديم الطلب</button>
+            <p class="text-sm text-center mt-2 text-gray-400">برجاء الضغط مرة واحدة فقط</p>
+          </div>
+        </form>
+        <div id="bookingResponse" class="mt-4 text-center hidden"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- قسم الاستعلام عن النتيجة -->
+  <section id="result" class="py-20 bg-darkbg/80">
+    <div class="container mx-auto px-4 max-w-3xl">
+      <div class="text-center mb-12">
+        <h2 class="text-4xl md:text-5xl font-black mb-4 text-white"><span class="neon-text">استعلم عن النتيجة</span></h2>
+        <div class="w-24 h-1 bg-gradient-to-l from-primary-light to-secondary-light mx-auto rounded-full"></div>
+        <p class="mt-4 text-gray-400 text-lg">
+          برجاء إذا ظهرت لك رسالة "لا توجد نتائج" قم بتحديث الصفحة (refresh)
+        </p>
+      </div>
+      
+      <div class="glass-card rounded-3xl p-8">
+        <form id="inquiryForm">
+          <div class="mb-6">
+            <label class="block text-sm font-medium mb-1 text-gray-300">أدخل رقم الهاتف</label>
+            <input type="tel" id="iPhone" class="w-full px-4 py-3 rounded-xl" required>
+          </div>
+          <button type="submit" class="neon-button w-full py-4 rounded-xl font-bold text-xl">🔍 ابحث عن النتيجة</button>
+        </form>
+        
+        <div id="inquiryResponse" class="mt-6 hidden">
+          <div class="glass-card p-6 rounded-xl">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-xl font-bold text-primary-light">خيارات النتيجة</h3>
+              <button id="closeResult" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <div id="resultOptions" class="space-y-4">
+              <button id="downloadResult" class="w-full bg-secondary-light/20 hover:bg-secondary-light/30 border border-secondary-light text-white py-3 rounded-xl flex items-center justify-center gap-2"><i class="fas fa-download"></i> تحميل النتيجة</button>
+              <button id="viewResult" class="w-full bg-primary-light/20 hover:bg-primary-light/30 border border-primary-light text-white py-3 rounded-xl flex items-center justify-center gap-2"><i class="fas fa-eye"></i> عرض النتيجة</button>
+            </div>
+            
+            <div id="resultViewer" class="mt-6 hidden">
+              <div id="loadingSpinner" class="flex justify-center py-8"><div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-light"></div></div>
+              <iframe id="resultFrame" src="" class="w-full h-96 rounded-xl hidden"></iframe>
+              <img id="resultImage" src="" alt="النتيجة" class="w-full h-auto rounded-xl hidden">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- قسم اتصل بنا -->
+  <section id="inquiries" class="py-20 bg-darkbg/50">
+    <div class="container mx-auto px-4 max-w-3xl">
+      <div class="text-center mb-12">
+        <h2 class="text-4xl md:text-5xl font-black mb-4 text-white"><span class="neon-text">لو عندك استفسار!</span></h2>
+        <div class="w-24 h-1 bg-gradient-to-l from-primary-light to-secondary-light mx-auto rounded-full"></div>
+      </div>
+      
+      <div class="glass-card rounded-3xl p-8">
+        <form id="contactForm">
+          <div class="grid md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-sm font-medium mb-1 text-gray-300">الاسم</label>
+              <input type="text" id="cName" class="w-full px-4 py-3 rounded-xl" required>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1 text-gray-300">البريد الإلكتروني</label>
+              <input type="email" id="cEmail" class="w-full px-4 py-3 rounded-xl" required>
+            </div>
+            <div>
   <script>
-    // (جميع الوظائف كما هي تماماً بدون تغيير)
+    // (جميع الوظائف كما هي تماماً بدون تغيير، مع الحفاظ على نفس IDs والمنطق)
     const themeToggle = document.getElementById('themeToggle');
     const themeIcon = document.getElementById('themeIcon');
     
